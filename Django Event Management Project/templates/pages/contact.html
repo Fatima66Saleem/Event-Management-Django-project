@@ -1,0 +1,543 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact Us - Riphah EMS{% endblock %}
+
+{% block breadcrumb_items %}
+<li class="breadcrumb-item active" aria-current="page">Contact Us</li>
+{% endblock %}
+
+{% block page_header %}
+<i class="fas fa-envelope me-2 riphah-yellow"></i>Contact Us
+{% endblock %}
+
+{% block page_subtitle %}
+Get in touch with the Event Management System team at Riphah University
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <!-- Contact Information -->
+    <div class="col-lg-4 mb-4">
+        <div class="riphah-card h-100">
+            <div class="card-header-blue">
+                <h5 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>Our Location</h5>
+            </div>
+            <div class="card-body">
+                <div class="contact-info-item mb-4">
+                    <div class="contact-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <div class="contact-details">
+                        <h6 class="text-riphah-blue fw-bold mb-2">Riphah International University</h6>
+                        <p class="text-muted mb-0">Sahiwal Campus</p>
+                        <p class="text-muted mb-0">Near Pakpattan Bypass, Bypass Road</p>
+                        <p class="text-muted">Sahiwal, 57000</p>
+                    </div>
+                </div>
+                
+                <div class="contact-info-item mb-4">
+                    <div class="contact-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div class="contact-details">
+                        <h6 class="text-riphah-blue fw-bold mb-2">Phone Numbers</h6>
+                        <p class="text-muted mb-2">
+                            <i class="fas fa-phone-alt me-2 riphah-yellow"></i>
+                            <strong>Office:</strong> (040) 2032002
+                        </p>
+                        <p class="text-muted mb-0">
+                            <i class="fas fa-mobile-alt me-2 riphah-yellow"></i>
+                            <strong>Helpline:</strong> +92 40 111 747 742
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="contact-info-item mb-4">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="contact-details">
+                        <h6 class="text-riphah-blue fw-bold mb-2">Email Addresses</h6>
+                        <p class="text-muted mb-2">
+                            <i class="fas fa-envelope me-2 riphah-yellow"></i>
+                            <strong>General:</strong> info@riphah.edu.pk
+                        </p>
+                        <p class="text-muted mb-0">
+                            <i class="fas fa-headset me-2 riphah-yellow"></i>
+                            <strong>Support:</strong> support@riphah.edu.pk
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="contact-info-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="contact-details">
+                        <h6 class="text-riphah-blue fw-bold mb-2">Office Hours</h6>
+                        <p class="text-muted mb-2">
+                            <i class="far fa-calendar-alt me-2 riphah-yellow"></i>
+                            <strong>Monday - Friday:</strong> 8:00 AM - 4:00 PM
+                        </p>
+                        <p class="text-muted mb-0">
+                            <i class="far fa-calendar me-2 riphah-yellow"></i>
+                            <strong>Saturday:</strong> 9:00 AM - 1:00 PM
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Contact Form -->
+    <div class="col-lg-8">
+        <div class="riphah-card h-100">
+            <div class="card-header-blue">
+                <h5 class="mb-0"><i class="fas fa-paper-plane me-2"></i>Send Us a Message</h5>
+            </div>
+            <div class="card-body">
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-riphah alert-riphah-{{ message.tags }} mb-4">
+                    <i class="fas 
+                        {% if message.tags == 'success' %}fa-check-circle
+                        {% elif message.tags == 'error' or message.tags == 'danger' %}fa-exclamation-circle
+                        {% elif message.tags == 'warning' %}fa-exclamation-triangle
+                        {% else %}fa-info-circle{% endif %}
+                        me-3"></i>
+                    <div>{{ message }}</div>
+                </div>
+                {% endfor %}
+                {% endif %}
+                
+                <form method="post" action="{% url 'contact' %}">
+                    {% csrf_token %}
+                    
+                    <div class="grid-system grid-col-2 gap-3 mb-4">
+                        <div class="grid-item">
+                            <div class="form-group">
+                                <label for="name" class="form-label fw-semibold text-riphah-blue">
+                                    <i class="fas fa-user me-2"></i>Your Name *
+                                </label>
+                                <input type="text" class="form-control" id="name" name="name" 
+                                       placeholder="Enter your full name" required
+                                       value="{{ form.name.value|default:'' }}">
+                            </div>
+                        </div>
+                        
+                        <div class="grid-item">
+                            <div class="form-group">
+                                <label for="email" class="form-label fw-semibold text-riphah-blue">
+                                    <i class="fas fa-envelope me-2"></i>Email Address *
+                                </label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       placeholder="Enter your email address" required
+                                       value="{{ form.email.value|default:'' }}">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid-system grid-col-1 mb-4">
+                        <div class="grid-item">
+                            <div class="form-group">
+                                <label for="subject" class="form-label fw-semibold text-riphah-blue">
+                                    <i class="fas fa-tag me-2"></i>Subject *
+                                </label>
+                                <select class="form-select" id="subject" name="subject" required>
+                                    <option value="">Select a subject</option>
+                                    <option value="general" {% if form.subject.value == 'general' %}selected{% endif %}>General Inquiry</option>
+                                    <option value="technical" {% if form.subject.value == 'technical' %}selected{% endif %}>Technical Support</option>
+                                    <option value="feedback" {% if form.subject.value == 'feedback' %}selected{% endif %}>Feedback/Suggestions</option>
+                                    <option value="event" {% if form.subject.value == 'event' %}selected{% endif %}>Event Related Query</option>
+                                    <option value="account" {% if form.subject.value == 'account' %}selected{% endif %}>Account Issues</option>
+                                    <option value="other" {% if form.subject.value == 'other' %}selected{% endif %}>Other</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid-system grid-col-1 mb-4">
+                        <div class="grid-item">
+                            <div class="form-group">
+                                <label for="message" class="form-label fw-semibold text-riphah-blue">
+                                    <i class="fas fa-comment-dots me-2"></i>Your Message *
+                                </label>
+                                <textarea class="form-control" id="message" name="message" 
+                                          rows="6" placeholder="Please provide details of your inquiry..." 
+                                          required>{{ form.message.value|default:'' }}</textarea>
+                                <div class="form-text">
+                                    Please be as detailed as possible so we can assist you better.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid-system grid-col-2 gap-3 mb-4">
+                        <div class="grid-item">
+                            <div class="form-group">
+                                <label for="department" class="form-label fw-semibold text-riphah-blue">
+                                    <i class="fas fa-university me-2"></i>Department (Optional)
+                                </label>
+                                <select class="form-select" id="department" name="department">
+                                    <option value="">Select Department</option>
+                                    <option value="computer_science" {% if form.department.value == 'computer_science' %}selected{% endif %}>Computer Science</option>
+                                    <option value="management" {% if form.department.value == 'management' %}selected{% endif %}>Business & Management</option>
+                                    <option value="engineering" {% if form.subject.value == 'engineering' %}selected{% endif %}>Engineering</option>
+                                    <option value="medical" {% if form.subject.value == 'medical' %}selected{% endif %}>Medical Sciences</option>
+                                    <option value="all" {% if form.subject.value == 'all' %}selected{% endif %}>All Departments</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="grid-item">
+                            <div class="form-group">
+                                <label class="form-label fw-semibold text-riphah-blue">
+                                    <i class="fas fa-user-tag me-2"></i>User Type
+                                </label>
+                                <div class="user-type-buttons">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="user_type" 
+                                               id="student_type" value="student" 
+                                               {% if form.user_type.value == 'student' %}checked{% endif %}>
+                                        <label class="form-check-label" for="student_type">
+                                            <i class="fas fa-graduation-cap me-1"></i>Student
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="user_type" 
+                                               id="faculty_type" value="faculty"
+                                               {% if form.user_type.value == 'faculty' %}checked{% endif %}>
+                                        <label class="form-check-label" for="faculty_type">
+                                            <i class="fas fa-chalkboard-teacher me-1"></i>Faculty
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="user_type" 
+                                               id="other_type" value="other"
+                                               {% if form.user_type.value == 'other' %}checked{% endif %}>
+                                        <label class="form-check-label" for="other_type">
+                                            <i class="fas fa-user me-1"></i>Other
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid-system grid-col-1">
+                        <div class="grid-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="newsletter" name="newsletter">
+                                    <label class="form-check-label small" for="newsletter">
+                                        Subscribe to our newsletter for updates
+                                    </label>
+                                </div>
+                                <button type="submit" class="btn btn-riphah-yellow px-5">
+                                    <i class="fas fa-paper-plane me-2"></i>Send Message
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Support Channels -->
+<div class="riphah-card mt-4">
+    <div class="card-header-blue">
+        <h5 class="mb-0"><i class="fas fa-headset me-2"></i>Support Channels</h5>
+    </div>
+    <div class="card-body">
+        <div class="grid-system grid-col-3">
+            <div class="grid-item text-center">
+                <div class="support-icon">
+                    <i class="fas fa-comments fa-3x riphah-yellow mb-3"></i>
+                </div>
+                <h6 class="text-riphah-blue fw-bold mb-3">Live Chat Support</h6>
+                <p class="text-muted small mb-3">
+                    Get instant help through our live chat system during office hours.
+                </p>
+                <button class="btn btn-sm btn-riphah-outline">
+                    <i class="fas fa-comment-dots me-2"></i>Start Chat
+                </button>
+            </div>
+            
+            <div class="grid-item text-center">
+                <div class="support-icon">
+                    <i class="fas fa-question-circle fa-3x riphah-yellow mb-3"></i>
+                </div>
+                <h6 class="text-riphah-blue fw-bold mb-3">FAQ & Help Center</h6>
+                <p class="text-muted small mb-3">
+                    Find answers to common questions in our comprehensive help center.
+                </p>
+                <button class="btn btn-sm btn-riphah-outline">
+                    <i class="fas fa-search me-2"></i>Browse FAQs
+                </button>
+            </div>
+            
+            <div class="grid-item text-center">
+                <div class="support-icon">
+                    <i class="fas fa-file-alt fa-3x riphah-yellow mb-3"></i>
+                </div>
+                <h6 class="text-riphah-blue fw-bold mb-3">Documentation</h6>
+                <p class="text-muted small mb-3">
+                    Detailed guides and tutorials for using the Event Management System.
+                </p>
+                <button class="btn btn-sm btn-riphah-outline">
+                    <i class="fas fa-download me-2"></i>View Guides
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Contact Page Specific Styles */
+    
+    /* Contact Info Items */
+    .contact-info-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 1.5rem;
+    }
+    
+    .contact-info-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .contact-icon {
+        width: 50px;
+        height: 50px;
+        background: var(--riphah-yellow-light);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+    
+    .contact-icon i {
+        color: var(--riphah-blue);
+        font-size: 1.3rem;
+    }
+    
+    .contact-details h6 {
+        font-size: 1.1rem;
+    }
+    
+    .contact-details p {
+        line-height: 1.6;
+    }
+    
+    /* Form Styling */
+    .form-group {
+        margin-bottom: 0;
+    }
+    
+    .form-label {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .form-control, .form-select {
+        border: 2px solid #e0e0e0;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: var(--riphah-yellow);
+        box-shadow: 0 0 0 0.25rem rgba(255, 210, 0, 0.25);
+    }
+    
+    textarea.form-control {
+        resize: vertical;
+        min-height: 150px;
+    }
+    
+    .form-text {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-top: 0.5rem;
+    }
+    
+    /* User Type Buttons */
+    .user-type-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 0.5rem;
+    }
+    
+    .form-check-inline {
+        margin: 0;
+    }
+    
+    .form-check-input {
+        width: 1.1em;
+        height: 1.1em;
+        border: 2px solid #dee2e6;
+        cursor: pointer;
+    }
+    
+    .form-check-input:checked {
+        background-color: var(--riphah-blue);
+        border-color: var(--riphah-blue);
+    }
+    
+    .form-check-input:focus {
+        border-color: var(--riphah-yellow);
+        box-shadow: 0 0 0 0.25rem rgba(255, 210, 0, 0.25);
+    }
+    
+    .form-check-label {
+        color: var(--riphah-blue);
+        cursor: pointer;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+    }
+    
+    /* Support Channels */
+    .support-icon {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .support-icon::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80px;
+        height: 80px;
+        background: rgba(255, 210, 0, 0.1);
+        border-radius: 50%;
+        z-index: -1;
+    }
+    
+    /* Grid System */
+    .grid-system {
+        gap: 1rem;
+    }
+    
+    .grid-item {
+        background: white;
+        border-radius: 10px;
+        padding: 1.25rem;
+        transition: all 0.3s ease;
+    }
+    
+    .grid-item:hover {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    }
+    
+    /* Button Styling */
+    .btn-riphah-yellow {
+        font-weight: 600;
+        padding: 0.75rem 2rem;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-riphah-yellow:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(255, 210, 0, 0.3);
+    }
+    
+    .btn-riphah-outline {
+        border: 2px solid var(--riphah-blue);
+        color: var(--riphah-blue);
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-riphah-outline:hover {
+        background: var(--riphah-blue);
+        color: white;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        .grid-system.grid-col-3 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .grid-system.grid-col-2 {
+            grid-template-columns: 1fr;
+        }
+        
+        .contact-info-item {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .contact-icon {
+            margin-right: 0;
+            margin-bottom: 1rem;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .grid-system.grid-col-3 {
+            grid-template-columns: 1fr;
+        }
+        
+        .user-type-buttons {
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .form-check-inline {
+            display: flex;
+            align-items: center;
+            margin: 0;
+        }
+        
+        .d-flex.justify-content-between {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .d-flex.justify-content-between .btn {
+            width: 100%;
+            text-align: center;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .grid-item {
+            padding: 1rem;
+        }
+        
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+        }
+        
+        .contact-icon i {
+            font-size: 1.1rem;
+        }
+        
+        .support-icon i {
+            font-size: 2.5rem;
+        }
+        
+        .support-icon::after {
+            width: 60px;
+            height: 60px;
+        }
+    }
+</style>
+
+{% endblock %}

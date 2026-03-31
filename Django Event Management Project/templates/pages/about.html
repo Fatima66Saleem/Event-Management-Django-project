@@ -1,0 +1,549 @@
+{% extends 'base.html' %}
+
+{% block title %}About Us - Riphah EMS{% endblock %}
+
+{% block breadcrumb_items %}
+<li class="breadcrumb-item active" aria-current="page">About Us</li>
+{% endblock %}
+
+{% block page_header %}
+<i class="fas fa-info-circle me-2 riphah-yellow"></i>About Event Management System
+{% endblock %}
+
+{% block page_subtitle %}
+Empowering Riphah University with Seamless Event Organization and Management
+{% endblock %}
+
+{% block content %}
+
+<!-- Mission Statement -->
+<div class="riphah-card mb-5">
+    <div class="card-header-blue">
+        <h5 class="mb-0"><i class="fas fa-bullseye me-2"></i>Our Mission</h5>
+    </div>
+    <div class="card-body p-4">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h3 class="text-riphah-blue mb-4">
+                    Transforming Event Management at Riphah International University
+                </h3>
+                <p class="lead text-muted mb-4">
+                    Our mission is to provide a comprehensive, efficient, and user-friendly platform 
+                    that streamlines event organization, participation, and management for the entire 
+                    Riphah University community.
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    <span class="badge bg-riphah-yellow text-riphah-blue px-3 py-2">
+                        <i class="fas fa-lightbulb me-2"></i>Innovation
+                    </span>
+                    <span class="badge bg-riphah-blue text-white px-3 py-2">
+                        <i class="fas fa-users me-2"></i>Community
+                    </span>
+                    <span class="badge bg-riphah-yellow text-riphah-blue px-3 py-2">
+                        <i class="fas fa-chart-line me-2"></i>Efficiency
+                    </span>
+                    <span class="badge bg-riphah-blue text-white px-3 py-2">
+                        <i class="fas fa-graduation-cap me-2"></i>Education
+                    </span>
+                </div>
+            </div>
+            <div class="col-lg-4 text-center mt-4 mt-lg-0">
+                <div class="mission-icon">
+                    <i class="fas fa-university fa-6x riphah-yellow"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Grid -->
+<div class="grid-system grid-col-3 mb-5">
+    <div class="grid-item">
+        <div class="grid-item-header">
+            <div class="grid-item-icon">
+                <i class="fas fa-user-plus"></i>
+            </div>
+            <h5 class="grid-item-title">Student Registration</h5>
+        </div>
+        <div class="grid-item-content">
+            <p class="text-muted">
+                Easy registration for students to participate in academic, cultural, and sports events. 
+                Track your event history and certificates all in one place.
+            </p>
+            <ul class="feature-list">
+                <li><i class="fas fa-check-circle riphah-yellow me-2"></i>Quick event enrollment</li>
+                <li><i class="fas fa-check-circle riphah-yellow me-2"></i>Participation tracking</li>
+                <li><i class="fas fa-check-circle riphah-yellow me-2"></i>Digital certificates</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="grid-item">
+        <div class="grid-item-header">
+            <div class="grid-item-icon">
+                <i class="fas fa-calendar-plus"></i>
+            </div>
+            <h5 class="grid-item-title">Faculty Event Creation</h5>
+        </div>
+        <div class="grid-item-content">
+            <p class="text-muted">
+                Faculty members can easily create, manage, and organize events. Complete control over 
+                event details, participants, and scheduling.
+            </p>
+            <ul class="feature-list">
+                <li><i class="fas fa-check-circle riphah-yellow me-2"></i>Create unlimited events</li>
+                <li><i class="fas fa-check-circle riphah-yellow me-2"></i>Manage participants</li>
+                <li><i class="fas fa-check-circle riphah-yellow me-2"></i>Real-time updates</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="grid-item">
+        <div class="grid-item-header">
+            <div class="grid-item-icon">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <h5 class="grid-item-title">Event Calendar View</h5>
+        </div>
+        <div class="grid-item-content">
+            <p class="text-muted">
+                Interactive calendar showing all upcoming events. Filter by department, event type, 
+                or date to find exactly what you're looking for.
+            </p>
+            <ul class="feature-list">
+                <li><i class="fas fa-check-circle riphah-yellow me-2"></i>Monthly/weekly views</li>
+                <li><i class="fas fa-check-circle riphah-yellow me-2"></i>Smart filtering</li>
+                <li><i class="fas fa-check-circle riphah-yellow me-2"></i>Event reminders</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="grid-item">
+        <div class="grid-item-header">
+            <div class="grid-item-icon">
+                <i class="fas fa-star"></i>
+            </div>
+            <h5 class="grid-item-title">Review System</h5>
+        </div>
+        <div class="grid-item-content">
+            <p class="text-muted">
+                Students can provide valuable feedback on events they attended. Help improve future 
+                events with constructive reviews and ratings.
+            </p>
+            <ul class="feature-list">
+                <li><i class="fas fa-check-circle riphah-yellow me-2"></i>Star ratings</li>
+                <li><i class="fas fa-check-circle riphah-yellow me-2"></i>Written feedback</li>
+                <li><i class="fas fa-check-circle riphah-yellow me-2"></i>Anonymous reviews</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="grid-item">
+        <div class="grid-item-header">
+            <div class="grid-item-icon">
+                <i class="fas fa-user-circle"></i>
+            </div>
+            <h5 class="grid-item-title">User Profiles</h5>
+        </div>
+        <div class="grid-item-content">
+            <p class="text-muted">
+                Complete user profiles showing event history, achievements, and participation records. 
+                Customize your profile with your information.
+            </p>
+            <ul class="feature-list">
+                <li><i class="fas fa-check-circle riphah-yellow me-2"></i>Event history</li>
+                <li><i class="fas fa-check-circle riphah-yellow me-2"></i>Achievement badges</li>
+                <li><i class="fas fa-check-circle riphah-yellow me-2"></i>Profile customization</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="grid-item">
+        <div class="grid-item-header">
+            <div class="grid-item-icon">
+                <i class="fas fa-cogs"></i>
+            </div>
+            <h5 class="grid-item-title">Admin Management</h5>
+        </div>
+        <div class="grid-item-content">
+            <p class="text-muted">
+                Comprehensive admin panel for complete system management. Monitor activities, 
+                generate reports, and ensure smooth operation.
+            </p>
+            <ul class="feature-list">
+                <li><i class="fas fa-check-circle riphah-yellow me-2"></i>User management</li>
+                <li><i class="fas fa-check-circle riphah-yellow me-2"></i>Event moderation</li>
+                <li><i class="fas fa-check-circle riphah-yellow me-2"></i>Analytics dashboard</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- How to Use -->
+<div class="riphah-card mb-5">
+    <div class="card-header-blue">
+        <h5 class="mb-0"><i class="fas fa-play-circle me-2"></i>Getting Started</h5>
+    </div>
+    <div class="card-body p-4">
+        <div class="grid-system grid-col-2">
+            <div class="grid-item">
+                <div class="step-card">
+                    <div class="step-number riphah-gradient-yellow">1</div>
+                    <h5 class="text-riphah-blue mb-3">Register Your Account</h5>
+                    <p class="text-muted">
+                        Create your account as a Student, Faculty, or Admin. Fill in your details 
+                        and get verified instantly.
+                    </p>
+                    <div class="step-actions">
+                        <a href="{% url 'register' %}" class="btn btn-sm btn-riphah-outline">
+                            <i class="fas fa-user-plus me-2"></i>Register Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid-item">
+                <div class="step-card">
+                    <div class="step-number riphah-gradient-yellow">2</div>
+                    <h5 class="text-riphah-blue mb-3">Faculty: Create Events</h5>
+                    <p class="text-muted">
+                        Faculty members can create events for their departments. Set dates, locations, 
+                        and participant limits easily.
+                    </p>
+                    <div class="step-actions">
+                        {% if user.is_authenticated and user.profile.user_type == 'faculty' %}
+                        <a href="{% url 'create_event' %}" class="btn btn-sm btn-riphah-outline">
+                            <i class="fas fa-plus-circle me-2"></i>Create Event
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid-item">
+                <div class="step-card">
+                    <div class="step-number riphah-gradient-yellow">3</div>
+                    <h5 class="text-riphah-blue mb-3">Students: Browse & Register</h5>
+                    <p class="text-muted">
+                        Explore events through the calendar or list view. Register for events that 
+                        interest you with one click.
+                    </p>
+                    <div class="step-actions">
+                        <a href="{% url 'all_events' %}" class="btn btn-sm btn-riphah-outline">
+                            <i class="fas fa-calendar-alt me-2"></i>Browse Events
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid-item">
+                <div class="step-card">
+                    <div class="step-number riphah-gradient-yellow">4</div>
+                    <h5 class="text-riphah-blue mb-3">Submit Reviews & Feedback</h5>
+                    <p class="text-muted">
+                        After attending events, provide valuable feedback to help improve future 
+                        events and share your experience.
+                    </p>
+                    <div class="step-actions">
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'dashboard' %}" class="btn btn-sm btn-riphah-outline">
+                            <i class="fas fa-star me-2"></i>My Events
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Section -->
+<div class="riphah-card mb-5">
+    <div class="card-header-blue">
+        <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>System Statistics</h5>
+    </div>
+    <div class="card-body">
+        <div class="grid-system grid-col-4">
+            <div class="grid-item text-center">
+                <div class="stat-icon">
+                    <i class="fas fa-users fa-3x riphah-yellow"></i>
+                </div>
+                <h3 class="text-riphah-blue mt-3 mb-2">500+</h3>
+                <p class="text-muted mb-0">Active Users</p>
+            </div>
+            
+            <div class="grid-item text-center">
+                <div class="stat-icon">
+                    <i class="fas fa-calendar-check fa-3x riphah-yellow"></i>
+                </div>
+                <h3 class="text-riphah-blue mt-3 mb-2">150+</h3>
+                <p class="text-muted mb-0">Events Conducted</p>
+            </div>
+            
+            <div class="grid-item text-center">
+                <div class="stat-icon">
+                    <i class="fas fa-university fa-3x riphah-yellow"></i>
+                </div>
+                <h3 class="text-riphah-blue mt-3 mb-2">10+</h3>
+                <p class="text-muted mb-0">Departments</p>
+            </div>
+            
+            <div class="grid-item text-center">
+                <div class="stat-icon">
+                    <i class="fas fa-star fa-3x riphah-yellow"></i>
+                </div>
+                <h3 class="text-riphah-blue mt-3 mb-2">4.8/5</h3>
+                <p class="text-muted mb-0">User Rating</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- University Connection -->
+<div class="riphah-card">
+    <div class="card-header-blue">
+        <h5 class="mb-0"><i class="fas fa-university me-2"></i>About Riphah International University</h5>
+    </div>
+    <div class="card-body p-4">
+        <div class="row align-items-center">
+            <div class="col-lg-4 text-center mb-4 mb-lg-0">
+                <img src="https://i0.wp.com/riphahsahiwal.edu.pk/wp-content/uploads/2023/07/riphah-logo-no-border-new.png" 
+                     alt="Riphah University Logo" class="img-fluid" style="max-width: 250px;">
+            </div>
+            <div class="col-lg-8">
+                <h4 class="text-riphah-blue mb-3">Proudly Serving Riphah Community</h4>
+                <p class="text-muted mb-3">
+                    This Event Management System is developed specifically for Riphah International 
+                    University, Sahiwal Campus. Our goal is to enhance the academic and co-curricular 
+                    experience for students and faculty through organized events.
+                </p>
+                <p class="text-muted mb-0">
+                    We are committed to supporting Riphah's mission of promoting excellence in education 
+                    through innovative technological solutions that facilitate learning, collaboration, 
+                    and community building.
+                </p>
+                <div class="mt-4">
+                    <a href="https://riphah.edu.pk" target="_blank" class="btn btn-riphah-outline">
+                        <i class="fas fa-external-link-alt me-2"></i>Visit University Website
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* About Page Specific Styles */
+    .mission-icon {
+        animation: float 3s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-15px); }
+    }
+    
+    /* Feature List */
+    .feature-list {
+        list-style: none;
+        padding-left: 0;
+        margin-top: 1rem;
+    }
+    
+    .feature-list li {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .feature-list li:last-child {
+        border-bottom: none;
+    }
+    
+    /* Step Cards */
+    .step-card {
+        padding: 1.5rem;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .step-number {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        color: var(--riphah-blue);
+    }
+    
+    .step-actions {
+        margin-top: auto;
+        padding-top: 1.5rem;
+    }
+    
+    /* Stats Section */
+    .stat-icon {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .stat-icon::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80px;
+        height: 80px;
+        background: rgba(255, 210, 0, 0.1);
+        border-radius: 50%;
+        z-index: -1;
+    }
+    
+    /* Grid System Enhancements */
+    .grid-system {
+        gap: 1.5rem;
+    }
+    
+    .grid-item {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        border: 1px solid #f0f0f0;
+    }
+    
+    .grid-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 49, 91, 0.1);
+        border-color: var(--riphah-yellow);
+    }
+    
+    .grid-item-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--riphah-yellow-light);
+    }
+    
+    .grid-item-icon {
+        width: 50px;
+        height: 50px;
+        background: var(--riphah-yellow);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+    }
+    
+    .grid-item-icon i {
+        color: var(--riphah-blue);
+        font-size: 1.3rem;
+    }
+    
+    .grid-item-title {
+        color: var(--riphah-blue);
+        font-weight: 600;
+        margin: 0;
+        font-size: 1.2rem;
+    }
+    
+    .grid-item-content {
+        color: #666;
+        line-height: 1.6;
+    }
+    
+    /* Badge Styling */
+    .badge {
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    /* Gradient Backgrounds */
+    .riphah-gradient-yellow {
+        background: linear-gradient(135deg, var(--riphah-yellow), #FFC107);
+        color: var(--riphah-blue);
+    }
+    
+    .riphah-gradient-blue {
+        background: linear-gradient(135deg, var(--riphah-blue), var(--riphah-blue-light));
+        color: white;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        .grid-system.grid-col-3 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .grid-system.grid-col-4 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .grid-system.grid-col-2 {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .grid-system.grid-col-3,
+        .grid-system.grid-col-4 {
+            grid-template-columns: 1fr;
+        }
+        
+        .mission-icon i {
+            font-size: 4rem;
+        }
+        
+        .step-number {
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+        }
+        
+        .stat-icon i {
+            font-size: 2.5rem;
+        }
+        
+        .stat-icon::after {
+            width: 60px;
+            height: 60px;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .grid-item {
+            padding: 1rem;
+        }
+        
+        .grid-item-icon {
+            width: 40px;
+            height: 40px;
+        }
+        
+        .grid-item-icon i {
+            font-size: 1.1rem;
+        }
+        
+        .grid-item-title {
+            font-size: 1.1rem;
+        }
+        
+        .badge {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.8rem;
+        }
+    }
+</style>
+
+{% endblock %}

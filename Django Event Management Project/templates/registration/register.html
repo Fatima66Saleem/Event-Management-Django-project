@@ -1,0 +1,672 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - Riphah EMS{% endblock %}
+
+{% block breadcrumb_items %}
+<li class="breadcrumb-item active" aria-current="page">Register</li>
+{% endblock %}
+
+{% block page_header %}
+<i class="fas fa-user-plus me-2 riphah-yellow"></i>Create Account
+{% endblock %}
+
+{% block page_subtitle %}
+Join Riphah Event Management System as Student, Faculty or Admin
+{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center mt-4">
+    <div class="col-lg-10">
+        <div class="riphah-card">
+            <!-- Registration Form Card -->
+            <div class="card-header-blue">
+                <div class="d-flex align-items-center">
+                    <div class="register-icon-circle me-3">
+                        <i class="fas fa-user-plus fa-lg"></i>
+                    </div>
+                    <div>
+                        <h4 class="mb-1">Create New Account</h4>
+                        <p class="mb-0 small opacity-75">Fill in your details to get started</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-body p-4">
+                <!-- Error Messages -->
+                {% if form.errors %}
+                <div class="alert alert-riphah alert-riphah-danger mb-4">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-exclamation-circle fa-2x me-3"></i>
+                        <div>
+                            <h6 class="mb-1">Registration Error</h6>
+                            <ul class="mb-0 small">
+                                {% for field, errors in form.errors.items %}
+                                    {% for error in errors %}
+                                        <li>{{ field|title }}: {{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Registration Form -->
+                <form method="post" action="{% url 'register' %}">
+                    {% csrf_token %}
+                    
+                    <!-- User Type Selection -->
+                    <div class="grid-system grid-col-3 mb-5">
+                        <!-- Student Option -->
+                        <div class="user-type-card text-center p-4">
+                            <input type="radio" name="user_type" value="student" id="user_type_student" 
+                                   class="user-type-radio" {% if form.user_type.value == 'student' %}checked{% endif %}
+                                   onchange="this.form.submit();">
+                            <label for="user_type_student" class="d-block">
+                                <div class="user-type-icon mb-3">
+                                    <i class="fas fa-graduation-cap fa-3x riphah-yellow"></i>
+                                </div>
+                                <h5 class="text-riphah-blue fw-bold">Student</h5>
+                                <p class="text-muted small mb-0">Register as student to participate in events</p>
+                            </label>
+                        </div>
+                        
+                        <!-- Faculty Option -->
+                        <div class="user-type-card text-center p-4">
+                            <input type="radio" name="user_type" value="faculty" id="user_type_faculty"
+                                   class="user-type-radio" {% if form.user_type.value == 'faculty' %}checked{% endif %}
+                                   onchange="this.form.submit();">
+                            <label for="user_type_faculty" class="d-block">
+                                <div class="user-type-icon mb-3">
+                                    <i class="fas fa-chalkboard-teacher fa-3x riphah-yellow"></i>
+                                </div>
+                                <h5 class="text-riphah-blue fw-bold">Faculty</h5>
+                                <p class="text-muted small mb-0">Register as faculty to organize events</p>
+                            </label>
+                        </div>
+                        
+                        <!-- Admin Option -->
+                        <div class="user-type-card text-center p-4">
+                            <input type="radio" name="user_type" value="admin" id="user_type_admin"
+                                   class="user-type-radio" {% if form.user_type.value == 'admin' %}checked{% endif %}
+                                   onchange="this.form.submit();">
+                            <label for="user_type_admin" class="d-block">
+                                <div class="user-type-icon mb-3">
+                                    <i class="fas fa-user-shield fa-3x riphah-yellow"></i>
+                                </div>
+                                <h5 class="text-riphah-blue fw-bold">Admin</h5>
+                                <p class="text-muted small mb-0">Register as admin to manage system</p>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Selected User Type Display -->
+                    <div class="alert alert-riphah alert-riphah-info mb-4">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-info-circle fa-2x me-3 text-riphah-yellow"></i>
+                            <div>
+                                <h6 class="mb-1">Registering as: 
+                                    <span class="text-riphah-blue fw-bold">
+                                        {% if form.user_type.value == 'student' %}
+                                            Student
+                                        {% elif form.user_type.value == 'faculty' %}
+                                            Faculty
+                                        {% elif form.user_type.value == 'admin' %}
+                                            Admin
+                                        {% else %}
+                                            Please select account type
+                                        {% endif %}
+                                    </span>
+                                </h6>
+                                <p class="mb-0 small">
+                                    {% if form.user_type.value == 'student' %}
+                                        You'll be able to register for events and track your participation.
+                                    {% elif form.user_type.value == 'faculty' %}
+                                        You'll be able to create and manage events for your department.
+                                    {% elif form.user_type.value == 'admin' %}
+                                        You'll have full access to manage the event management system.
+                                    {% else %}
+                                        Select your role to see specific fields.
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Basic Information Grid -->
+                    <div class="grid-system grid-col-2 gap-4 mb-5">
+                        <!-- Personal Information -->
+                        <div class="grid-item">
+                            <div class="grid-item-header mb-4">
+                                <div class="grid-item-icon">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <h5 class="grid-item-title">Personal Information</h5>
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="first_name" class="form-label fw-semibold text-riphah-blue">
+                                    <i class="fas fa-user-circle me-2"></i>First Name *
+                                </label>
+                                <input type="text" class="form-control" id="first_name" name="first_name" 
+                                       placeholder="Enter first name" required
+                                       value="{{ form.first_name.value|default:'' }}">
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="last_name" class="form-label fw-semibold text-riphah-blue">
+                                    <i class="fas fa-user-circle me-2"></i>Last Name *
+                                </label>
+                                <input type="text" class="form-control" id="last_name" name="last_name" 
+                                       placeholder="Enter last name" required
+                                       value="{{ form.last_name.value|default:'' }}">
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="username" class="form-label fw-semibold text-riphah-blue">
+                                    <i class="fas fa-id-card me-2"></i>Username *
+                                </label>
+                                <input type="text" class="form-control" id="username" name="username" 
+                                       placeholder="Choose a username" required
+                                       value="{{ form.username.value|default:'' }}">
+                                <div class="form-text small">This will be your login username</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Account Information -->
+                        <div class="grid-item">
+                            <div class="grid-item-header mb-4">
+                                <div class="grid-item-icon">
+                                    <i class="fas fa-lock"></i>
+                                </div>
+                                <h5 class="grid-item-title">Account Information</h5>
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="email" class="form-label fw-semibold text-riphah-blue">
+                                    <i class="fas fa-envelope me-2"></i>Email Address *
+                                </label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       placeholder="Enter your email" required
+                                       value="{{ form.email.value|default:'' }}">
+                                <div class="form-text small">We'll send a verification email</div>
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <label for="password1" class="form-label fw-semibold text-riphah-blue">
+                                        <i class="fas fa-key me-2"></i>Password *
+                                    </label>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="togglePassword1" 
+                                               onclick="var pass = document.getElementById('password1');
+                                                        pass.type = pass.type === 'password' ? 'text' : 'password';">
+                                        <label class="form-check-label small" for="togglePassword1">
+                                            <i class="fas fa-eye me-1"></i>Show
+                                        </label>
+                                    </div>
+                                </div>
+                                <input type="password" class="form-control" id="password1" name="password1" 
+                                       placeholder="Create a strong password" required>
+                                <div class="form-text small">Use at least 8 characters with letters and numbers</div>
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <label for="password2" class="form-label fw-semibold text-riphah-blue">
+                                        <i class="fas fa-key me-2"></i>Confirm Password *
+                                    </label>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="togglePassword2" 
+                                               onclick="var pass = document.getElementById('password2');
+                                                        pass.type = pass.type === 'password' ? 'text' : 'password';">
+                                        <label class="form-check-label small" for="togglePassword2">
+                                            <i class="fas fa-eye me-1"></i>Show
+                                        </label>
+                                    </div>
+                                </div>
+                                <input type="password" class="form-control" id="password2" name="password2" 
+                                       placeholder="Confirm your password" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Contact Information -->
+                    <div class="grid-system grid-col-3 gap-4 mb-5">
+                        <div class="grid-item">
+                            <div class="form-group">
+                                <label for="phone" class="form-label fw-semibold text-riphah-blue">
+                                    <i class="fas fa-phone me-2"></i>Phone Number *
+                                </label>
+                                <input type="tel" class="form-control" id="phone" name="phone" 
+                                       placeholder="Enter phone number" required
+                                       value="{{ form.phone.value|default:'' }}">
+                            </div>
+                        </div>
+                        
+                        <div class="grid-item">
+                            <div class="form-group">
+                                <label for="department" class="form-label fw-semibold text-riphah-blue">
+                                    <i class="fas fa-university me-2"></i>Department *
+                                </label>
+                                <select class="form-select" id="department" name="department" required>
+                                    <option value="">Select Department</option>
+                                    {% for dept in departments %}
+                                    <option value="{{ dept.id }}" {% if form.department.value == dept.id %}selected{% endif %}>
+                                        {{ dept.name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="grid-item">
+                            <div class="form-group">
+                                <label class="form-label fw-semibold text-riphah-blue">
+                                    <i class="fas fa-calendar me-2"></i>Date of Birth
+                                </label>
+                                <input type="date" class="form-control" id="dob" name="dob" 
+                                       value="{{ form.dob.value|default:'' }}">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Conditional Fields -->
+                    {% if form.user_type.value == 'student' %}
+                    <!-- Student Fields -->
+                    <div class="grid-system grid-col-2 gap-4 mb-4">
+                        <div class="grid-item">
+                            <div class="form-group">
+                                <label for="roll_number" class="form-label fw-semibold text-riphah-blue">
+                                    <i class="fas fa-id-badge me-2"></i>Roll Number *
+                                </label>
+                                <input type="text" class="form-control" id="roll_number" name="roll_number" 
+                                       placeholder="Enter roll number" required
+                                       value="{{ form.roll_number.value|default:'' }}">
+                            </div>
+                        </div>
+                        
+                        <div class="grid-item">
+                            <div class="form-group">
+                                <label for="batch" class="form-label fw-semibold text-riphah-blue">
+                                    <i class="fas fa-calendar-alt me-2"></i>Batch Year *
+                                </label>
+                                <input type="text" class="form-control" id="batch" name="batch" 
+                                       placeholder="e.g., 2023" required
+                                       value="{{ form.batch.value|default:'' }}">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% elif form.user_type.value == 'faculty' %}
+                    <!-- Faculty Fields -->
+                    <div class="grid-system grid-col-2 gap-4 mb-4">
+                        <div class="grid-item">
+                            <div class="form-group">
+                                <label for="employee_id" class="form-label fw-semibold text-riphah-blue">
+                                    <i class="fas fa-id-card me-2"></i>Employee ID *
+                                </label>
+                                <input type="text" class="form-control" id="employee_id" name="employee_id" 
+                                       placeholder="Enter employee ID" required
+                                       value="{{ form.employee_id.value|default:'' }}">
+                            </div>
+                        </div>
+                        
+                        <div class="grid-item">
+                            <div class="form-group">
+                                <label for="designation" class="form-label fw-semibold text-riphah-blue">
+                                    <i class="fas fa-user-tie me-2"></i>Designation *
+                                </label>
+                                <select class="form-select" id="designation" name="designation" required>
+                                    <option value="">Select Designation</option>
+                                    <option value="professor" {% if form.designation.value == 'professor' %}selected{% endif %}>Professor</option>
+                                    <option value="associate_professor" {% if form.designation.value == 'associate_professor' %}selected{% endif %}>Associate Professor</option>
+                                    <option value="assistant_professor" {% if form.designation.value == 'assistant_professor' %}selected{% endif %}>Assistant Professor</option>
+                                    <option value="lecturer" {% if form.designation.value == 'lecturer' %}selected{% endif %}>Lecturer</option>
+                                    <option value="coordinator" {% if form.designation.value == 'coordinator' %}selected{% endif %}>Coordinator</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% elif form.user_type.value == 'admin' %}
+                    <!-- Admin Fields -->
+                    <div class="grid-system grid-col-2 gap-4 mb-4">
+                        <div class="grid-item">
+                            <div class="form-group">
+                                <label for="admin_id" class="form-label fw-semibold text-riphah-blue">
+                                    <i class="fas fa-id-card-alt me-2"></i>Admin ID *
+                                </label>
+                                <input type="text" class="form-control" id="admin_id" name="admin_id" 
+                                       placeholder="Enter admin ID" required
+                                       value="{{ form.admin_id.value|default:'' }}">
+                            </div>
+                        </div>
+                        
+                        <div class="grid-item">
+                            <div class="form-group">
+                                <label for="admin_role" class="form-label fw-semibold text-riphah-blue">
+                                    <i class="fas fa-cog me-2"></i>Admin Role *
+                                </label>
+                                <select class="form-select" id="admin_role" name="admin_role" required>
+                                    <option value="">Select Role</option>
+                                    <option value="supervisor" {% if form.admin_role.value == 'supervisor' %}selected{% endif %}>Supervisor</option>
+                                    <option value="coordinator" {% if form.admin_role.value == 'coordinator' %}selected{% endif %}>Coordinator</option>
+                                    <option value="manager" {% if form.admin_role.value == 'manager' %}selected{% endif %}>Manager</option>
+                                    <option value="administrator" {% if form.admin_role.value == 'administrator' %}selected{% endif %}>Administrator</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Terms and Conditions -->
+                    <div class="grid-system grid-col-1 mb-4">
+                        <div class="grid-item">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="terms" name="terms" required>
+                                <label class="form-check-label small" for="terms">
+                                    I agree to the <a href="#" class="text-riphah-blue">Terms & Conditions</a> and 
+                                    <a href="#" class="text-riphah-blue">Privacy Policy</a> of Riphah Event Management System
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div class="grid-system grid-col-1">
+                        <div class="grid-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a href="{% url 'login' %}" class="btn btn-riphah-outline">
+                                    <i class="fas fa-arrow-left me-2"></i>Back to Login
+                                </a>
+                                <button type="submit" class="btn btn-riphah-yellow px-5">
+                                    <i class="fas fa-user-plus me-2"></i>Create Account
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Registration Info -->
+        <div class="riphah-card mt-4">
+            <div class="card-body">
+                <div class="grid-system grid-col-3">
+                    <div class="grid-item text-center">
+                        <i class="fas fa-shield-alt fa-2x riphah-yellow mb-3"></i>
+                        <h6 class="text-riphah-blue fw-bold">Secure Registration</h6>
+                        <p class="text-muted small">Your data is protected with encryption</p>
+                    </div>
+                    
+                    <div class="grid-item text-center">
+                        <i class="fas fa-bolt fa-2x riphah-yellow mb-3"></i>
+                        <h6 class="text-riphah-blue fw-bold">Quick Setup</h6>
+                        <p class="text-muted small">Get started in just a few minutes</p>
+                    </div>
+                    
+                    <div class="grid-item text-center">
+                        <i class="fas fa-headset fa-2x riphah-yellow mb-3"></i>
+                        <h6 class="text-riphah-blue fw-bold">24/7 Support</h6>
+                        <p class="text-muted small">Help available whenever you need</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Registration Page Specific Styles */
+    .register-icon-circle {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--riphah-blue), var(--riphah-blue-light));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+    }
+    
+    /* User Type Cards */
+    .user-type-card {
+        cursor: pointer;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+        border-radius: 12px;
+        position: relative;
+    }
+    
+    .user-type-card:hover {
+        border-color: var(--riphah-yellow);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .user-type-radio {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    
+    .user-type-radio:checked + label .user-type-card {
+        border-color: var(--riphah-blue);
+        background: linear-gradient(135deg, rgba(0, 49, 91, 0.05), rgba(255, 210, 0, 0.05));
+    }
+    
+    .user-type-icon i {
+        transition: all 0.3s ease;
+    }
+    
+    .user-type-card:hover .user-type-icon i {
+        transform: scale(1.1);
+    }
+    
+    /* Form Styling */
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+    
+    .form-label {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-control, .form-select {
+        border: 2px solid #e0e0e0;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: var(--riphah-yellow);
+        box-shadow: 0 0 0 0.25rem rgba(255, 210, 0, 0.25);
+    }
+    
+    .form-text {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-top: 0.25rem;
+    }
+    
+    /* Grid System Customization */
+    .grid-system {
+        gap: 1.5rem;
+    }
+    
+    .grid-item {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+    }
+    
+    .grid-item:hover {
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+    }
+    
+    .grid-item-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--riphah-yellow-light);
+    }
+    
+    .grid-item-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--riphah-yellow);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+    }
+    
+    .grid-item-icon i {
+        color: var(--riphah-blue);
+        font-size: 1.2rem;
+    }
+    
+    .grid-item-title {
+        color: var(--riphah-blue);
+        font-weight: 600;
+        margin: 0;
+    }
+    
+    /* Password Toggle */
+    .form-check-inline {
+        display: inline-flex;
+        align-items: center;
+        margin: 0;
+    }
+    
+    .form-check-inline .form-check-input {
+        margin-right: 0.5rem;
+        margin-top: 0;
+    }
+    
+    /* Terms Checkbox */
+    .form-check-input {
+        width: 1.2em;
+        height: 1.2em;
+        border: 2px solid #dee2e6;
+        cursor: pointer;
+    }
+    
+    .form-check-input:checked {
+        background-color: var(--riphah-blue);
+        border-color: var(--riphah-blue);
+    }
+    
+    .form-check-input:focus {
+        border-color: var(--riphah-yellow);
+        box-shadow: 0 0 0 0.25rem rgba(255, 210, 0, 0.25);
+    }
+    
+    .form-check-label {
+        color: var(--riphah-blue);
+        cursor: pointer;
+    }
+    
+    /* Button Styling */
+    .btn-riphah-yellow {
+        font-weight: 600;
+        font-size: 1.1rem;
+        padding: 0.75rem 2.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-riphah-yellow:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(255, 210, 0, 0.3);
+    }
+    
+    .btn-riphah-outline {
+        border: 2px solid var(--riphah-blue);
+        color: var(--riphah-blue);
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-riphah-outline:hover {
+        background: var(--riphah-blue);
+        color: white;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        .grid-system.grid-col-3 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .grid-system.grid-col-2 {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .grid-system.grid-col-3 {
+            grid-template-columns: 1fr;
+        }
+        
+        .grid-system.grid-col-2 {
+            grid-template-columns: 1fr;
+        }
+        
+        .user-type-card {
+            padding: 1rem;
+        }
+        
+        .user-type-icon i {
+            font-size: 2.5rem;
+        }
+        
+        .card-body {
+            padding: 1.5rem !important;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .grid-item {
+            padding: 1rem;
+        }
+        
+        .grid-item-header {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .grid-item-icon {
+            margin-right: 0;
+            margin-bottom: 1rem;
+        }
+        
+        .btn-riphah-yellow {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+        }
+        
+        .d-flex.justify-content-between {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .d-flex.justify-content-between .btn {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+
+{% endblock %}

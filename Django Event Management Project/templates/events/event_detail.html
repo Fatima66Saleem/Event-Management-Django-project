@@ -1,0 +1,705 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ event.title }} - Riphah EMS{% endblock %}
+
+{% block breadcrumb_items %}
+<li class="breadcrumb-item"><a href="{% url 'all_events' %}">Events</a></li>
+<li class="breadcrumb-item active" aria-current="page">{{ event.title|truncatechars:30 }}</li>
+{% endblock %}
+
+{% block page_header %}
+<i class="fas fa-calendar-alt me-2 riphah-yellow"></i>{{ event.title }}
+{% endblock %}
+
+{% block page_subtitle %}
+Event details and registration information
+{% endblock %}
+
+{% block content %}
+
+<!-- Event Header with Actions -->
+<div class="riphah-card mb-4">
+    <div class="card-body p-4">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="event-status-badge me-3">
+                        {% if event.is_registration_open %}
+                        <span class="badge bg-success px-3 py-2">
+                            <i class="fas fa-check-circle me-1"></i> Registration Open
+                        </span>
+                        {% else %}
+                        <span class="badge bg-danger px-3 py-2">
+                            <i class="fas fa-times-circle me-1"></i> Registration Closed
+                        </span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="event-type-badge">
+                        <span class="badge bg-riphah-yellow text-riphah-blue px-3 py-2">
+                            <i class="fas fa-tag me-1"></i> {{ event.get_event_type_display }}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="event-meta d-flex flex-wrap gap-4">
+                    <div class="meta-item">
+                        <i class="fas fa-calendar-day riphah-yellow me-2"></i>
+                        <span class="fw-semibold">{{ event.date }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-clock riphah-yellow me-2"></i>
+                        <span class="fw-semibold">{{ event.time }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-map-marker-alt riphah-yellow me-2"></i>
+                        <span class="fw-semibold">{{ event.location }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-users riphah-yellow me-2"></i>
+                        <span class="fw-semibold">{{ event.get_available_seats }} seats available</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 mt-3 mt-lg-0">
+                <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
+                    {% if event.created_by == user %}
+                    <a href="{% url 'update_event' event.id %}" class="btn btn-riphah-yellow">
+                        <i class="fas fa-edit me-2"></i>Edit Event
+                    </a>
+                    <a href="{% url 'delete_event' event.id %}" class="btn btn-riphah-outline" 
+                       onclick="return confirm('Are you sure you want to delete this event?')">
+                        <i class="fas fa-trash me-2"></i>Delete
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Main Event Content -->
+    <div class="col-lg-8">
+        <!-- Event Image -->
+        {% if event.featured_image %}
+        <div class="riphah-card mb-4">
+            <div class="event-image-container">
+                <img src="{{ event.featured_image.url }}" class="event-detail-image" alt="{{ event.title }}">
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Event Description -->
+        <div class="riphah-card mb-4">
+            <div class="card-header-blue">
+                <h5 class="mb-0"><i class="fas fa-align-left me-2"></i>Event Description</h5>
+            </div>
+            <div class="card-body">
+                <div class="event-description">
+                    {{ event.description|linebreaks }}
+                </div>
+                
+                {% if event.venue_details %}
+                <div class="venue-details mt-4">
+                    <h6 class="text-riphah-blue fw-bold mb-3">
+                        <i class="fas fa-map-signs me-2"></i>Venue Details
+                    </h6>
+                    <div class="venue-content">
+                        {{ event.venue_details|linebreaks }}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Registration Section -->
+        <div class="riphah-card mb-4">
+            <div class="card-header-blue">
+                <h5 class="mb-0"><i class="fas fa-user-plus me-2"></i>Registration</h5>
+            </div>
+            <div class="card-body">
+                {% if user.is_authenticated %}
+                    {% if user.profile.user_type == 'student' %}
+                        {% if is_registered %}
+                            {% if registration.status == 'confirmed' %}
+                            <div class="alert alert-riphah alert-riphah-success mb-4">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-check-circle fa-2x me-3"></i>
+                                    <div>
+                                        <h6 class="mb-1">Registration Confirmed!</h6>
+                                        <p class="mb-0">You are successfully registered for this event.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="registration-actions">
+                                <form method="post" action="{% url 'cancel_registration' registration.id %}" 
+                                      class="d-inline" onsubmit="return confirm('Are you sure you want to cancel your registration?')">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-riphah-outline">
+                                        <i class="fas fa-times me-2"></i>Cancel Registration
+                                    </button>
+                                </form>
+                                <a href="#" class="btn btn-riphah-yellow ms-2">
+                                    <i class="fas fa-download me-2"></i>Download Ticket
+                                </a>
+                            </div>
+                            {% elif registration.status == 'cancelled' %}
+                            <div class="alert alert-riphah alert-riphah-warning">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                                    <div>
+                                        <h6 class="mb-1">Registration Cancelled</h6>
+                                        <p class="mb-0">Your registration has been cancelled for this event.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% else %}
+                            {% if event.is_registration_open and event.get_available_seats > 0 %}
+                            <div class="registration-available">
+                                <div class="d-grid">
+                                    <a href="{% url 'register_for_event' event.id %}" class="btn btn-riphah-yellow btn-lg py-3">
+                                        <i class="fas fa-user-plus me-2"></i>Register Now
+                                    </a>
+                                </div>
+                                <p class="text-center text-muted mt-3 mb-0">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    {{ event.get_available_seats }} seats available out of {{ event.max_participants }}
+                                </p>
+                            </div>
+                            {% else %}
+                            <div class="alert alert-riphah alert-riphah-info">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-info-circle fa-2x me-3"></i>
+                                    <div>
+                                        <h6 class="mb-1">Registration Not Available</h6>
+                                        <p class="mb-0">
+                                            {% if not event.is_registration_open %}
+                                                Registration is currently closed for this event.
+                                            {% else %}
+                                                All seats have been filled for this event.
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endif %}
+                    {% else %}
+                    <div class="alert alert-riphah alert-riphah-info">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-user-tie fa-2x me-3"></i>
+                            <div>
+                                <h6 class="mb-1">Faculty Account</h6>
+                                <p class="mb-0">Registration is only available for students.</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% else %}
+                <div class="alert alert-riphah alert-riphah-info">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-sign-in-alt fa-2x me-3"></i>
+                        <div>
+                            <h6 class="mb-1">Login Required</h6>
+                            <p class="mb-0">
+                                Please <a href="{% url 'login' %}" class="text-riphah-blue fw-bold">login</a> as a student to register for this event.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Reviews Section -->
+        <div class="riphah-card">
+            <div class="card-header-blue">
+                <h5 class="mb-0"><i class="fas fa-star me-2"></i>Reviews & Feedback</h5>
+            </div>
+            <div class="card-body">
+                {% if reviews %}
+                <div class="reviews-list">
+                    {% for review in reviews %}
+                    <div class="review-item mb-4 pb-4 border-bottom">
+                        <div class="review-header d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h6 class="text-riphah-blue fw-bold mb-1">{{ review.user.get_full_name }}</h6>
+                                <small class="text-muted">
+                                    <i class="far fa-clock me-1"></i>{{ review.created_at|timesince }} ago
+                                </small>
+                            </div>
+                            <div class="star-rating">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= review.rating %}
+                                        <i class="fas fa-star text-warning"></i>
+                                    {% else %}
+                                        <i class="far fa-star text-muted"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="review-content">
+                            <p class="mb-0">{{ review.comment }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-star fa-4x text-muted mb-3"></i>
+                    <h6 class="text-riphah-blue mb-2">No Reviews Yet</h6>
+                    <p class="text-muted">Be the first to share your experience about this event.</p>
+                </div>
+                {% endif %}
+                
+                <!-- Add Review Form -->
+                {% if user.is_authenticated and not is_registered and user.profile.user_type == 'student' %}
+                <div class="add-review-section mt-4 pt-4 border-top">
+                    <h6 class="text-riphah-blue fw-bold mb-3">
+                        <i class="fas fa-pen me-2"></i>Add Your Review
+                    </h6>
+                    <form method="post" action="{% url 'submit_review' event.id %}">
+                        {% csrf_token %}
+                        
+                        <div class="grid-system grid-col-2 gap-3 mb-3">
+                            <div class="grid-item">
+                                <div class="form-group">
+                                    <label for="rating" class="form-label fw-semibold text-riphah-blue">
+                                        <i class="fas fa-star me-2"></i>Rating
+                                    </label>
+                                    <select name="rating" class="form-select" id="rating" required>
+                                        <option value="">Select rating</option>
+                                        <option value="5">5 - Excellent</option>
+                                        <option value="4">4 - Very Good</option>
+                                        <option value="3">3 - Good</option>
+                                        <option value="2">2 - Fair</option>
+                                        <option value="1">1 - Poor</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="grid-item">
+                                <div class="form-group">
+                                    <label for="comment" class="form-label fw-semibold text-riphah-blue">
+                                        <i class="fas fa-comment me-2"></i>Your Feedback
+                                    </label>
+                                    <textarea name="comment" class="form-control" id="comment" 
+                                              rows="1" placeholder="Share your experience..." required></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-riphah-yellow">
+                                <i class="fas fa-paper-plane me-2"></i>Submit Review
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- Event Organizer -->
+        <div class="riphah-card mb-4">
+            <div class="card-header-blue">
+                <h5 class="mb-0"><i class="fas fa-user-tie me-2"></i>Event Organizer</h5>
+            </div>
+            <div class="card-body text-center">
+                <div class="organizer-avatar mb-3">
+                    <i class="fas fa-user-circle fa-4x riphah-yellow"></i>
+                </div>
+                <h5 class="text-riphah-blue fw-bold">{{ event.created_by.get_full_name }}</h5>
+                <p class="text-muted mb-2">
+                    {{ event.created_by.profile.designation|default:"Faculty Member" }}
+                </p>
+                <p class="text-muted mb-3">
+                    <i class="fas fa-envelope me-2"></i>{{ event.created_by.email }}
+                </p>
+                <a href="mailto:{{ event.created_by.email }}" class="btn btn-sm btn-riphah-outline">
+                    <i class="fas fa-envelope me-2"></i>Contact Organizer
+                </a>
+            </div>
+        </div>
+        
+        <!-- Event Details Card -->
+        <div class="riphah-card mb-4">
+            <div class="card-header-blue">
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Event Details</h5>
+            </div>
+            <div class="card-body">
+                <div class="event-details-list">
+                    <div class="detail-item mb-3">
+                        <div class="detail-icon">
+                            <i class="fas fa-tag riphah-yellow"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label">Event Type</div>
+                            <div class="detail-value">{{ event.get_event_type_display }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item mb-3">
+                        <div class="detail-icon">
+                            <i class="fas fa-university riphah-yellow"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label">Department</div>
+                            <div class="detail-value">{{ event.department.name|default:"All Departments" }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item mb-3">
+                        <div class="detail-icon">
+                            <i class="fas fa-users riphah-yellow"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label">Max Participants</div>
+                            <div class="detail-value">{{ event.max_participants }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item mb-3">
+                        <div class="detail-icon">
+                            <i class="fas fa-user-check riphah-yellow"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label">Registrations</div>
+                            <div class="detail-value">{{ event.get_registered_count }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-calendar-plus riphah-yellow"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label">Created On</div>
+                            <div class="detail-value">{{ event.created_at|date:"M d, Y" }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="riphah-card">
+            <div class="card-header-blue">
+                <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'all_events' %}" class="btn btn-riphah-outline">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Events
+                    </a>
+                    <a href="{% url 'calendar' %}" class="btn btn-riphah-outline">
+                        <i class="fas fa-calendar-alt me-2"></i>View Calendar
+                    </a>
+                    {% if user.is_authenticated and user.profile.user_type == 'faculty' %}
+                    <a href="{% url 'create_event' %}" class="btn btn-riphah-yellow">
+                        <i class="fas fa-plus-circle me-2"></i>Create Event
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Event Detail Page Specific Styles */
+    
+    /* Event Header */
+    .event-status-badge .badge {
+        border-radius: 20px;
+        font-weight: 600;
+    }
+    
+    .event-type-badge .badge {
+        border-radius: 20px;
+        font-weight: 600;
+    }
+    
+    .event-meta {
+        margin-top: 1rem;
+    }
+    
+    .meta-item {
+        display: flex;
+        align-items: center;
+        font-size: 1rem;
+    }
+    
+    /* Event Image */
+    .event-image-container {
+        overflow: hidden;
+        border-radius: 12px;
+    }
+    
+    .event-detail-image {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    
+    .event-image-container:hover .event-detail-image {
+        transform: scale(1.05);
+    }
+    
+    /* Event Description */
+    .event-description {
+        font-size: 1.05rem;
+        line-height: 1.8;
+        color: #444;
+    }
+    
+    .venue-content {
+        background: rgba(255, 210, 0, 0.05);
+        padding: 1.5rem;
+        border-radius: 10px;
+        border-left: 4px solid var(--riphah-yellow);
+    }
+    
+    /* Registration Section */
+    .registration-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 1rem;
+    }
+    
+    .registration-available .btn-lg {
+        font-size: 1.2rem;
+        padding: 1rem;
+    }
+    
+    /* Reviews */
+    .review-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+    
+    .star-rating {
+        font-size: 1rem;
+    }
+    
+    .add-review-section {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 10px;
+    }
+    
+    /* Event Details List */
+    .event-details-list {
+        padding: 0.5rem 0;
+    }
+    
+    .detail-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    .detail-item:hover {
+        background: rgba(255, 210, 0, 0.05);
+    }
+    
+    .detail-icon {
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 210, 0, 0.1);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+    
+    .detail-icon i {
+        color: var(--riphah-yellow);
+        font-size: 1.2rem;
+    }
+    
+    .detail-label {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-bottom: 0.25rem;
+    }
+    
+    .detail-value {
+        font-weight: 600;
+        color: var(--riphah-blue);
+    }
+    
+    /* Organizer Avatar */
+    .organizer-avatar i {
+        color: var(--riphah-yellow);
+    }
+    
+    /* Grid System */
+    .grid-system {
+        gap: 1rem;
+    }
+    
+    .grid-item {
+        background: white;
+        border-radius: 8px;
+        padding: 1rem;
+    }
+    
+    /* Form Styling */
+    .form-group {
+        margin-bottom: 0;
+    }
+    
+    .form-label {
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .form-control, .form-select {
+        border: 2px solid #e0e0e0;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: var(--riphah-yellow);
+        box-shadow: 0 0 0 0.25rem rgba(255, 210, 0, 0.25);
+    }
+    
+    textarea.form-control {
+        resize: vertical;
+        min-height: 80px;
+    }
+    
+    /* Alert Styling */
+    .alert-riphah {
+        border-radius: 12px;
+        border: none;
+        padding: 1rem 1.5rem;
+    }
+    
+    .alert-riphah-success {
+        background: linear-gradient(135deg, #d4edda, #c3e6cb);
+        border-left: 5px solid #28a745;
+        color: #155724;
+    }
+    
+    .alert-riphah-info {
+        background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+        border-left: 5px solid #17a2b8;
+        color: #0c5460;
+    }
+    
+    .alert-riphah-warning {
+        background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+        border-left: 5px solid #ffc107;
+        color: #856404;
+    }
+    
+    .alert-riphah-danger {
+        background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+        border-left: 5px solid #dc3545;
+        color: #721c24;
+    }
+    
+    /* Button Styling */
+    .btn-riphah-yellow {
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-riphah-yellow:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(255, 210, 0, 0.3);
+    }
+    
+    .btn-riphah-outline {
+        border: 2px solid var(--riphah-blue);
+        color: var(--riphah-blue);
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-riphah-outline:hover {
+        background: var(--riphah-blue);
+        color: white;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        .event-detail-image {
+            height: 300px;
+        }
+        
+        .grid-system.grid-col-2 {
+            grid-template-columns: 1fr;
+        }
+        
+        .registration-actions {
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .registration-actions .btn {
+            width: 100%;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .event-detail-image {
+            height: 250px;
+        }
+        
+        .event-meta {
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .meta-item {
+            font-size: 0.95rem;
+        }
+        
+        .organizer-avatar i {
+            font-size: 3rem;
+        }
+        
+        .detail-item {
+            padding: 0.5rem;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .event-detail-image {
+            height: 200px;
+        }
+        
+        .btn-lg {
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+        }
+        
+        .card-body {
+            padding: 1rem !important;
+        }
+    }
+</style>
+
+{% endblock %}

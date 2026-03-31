@@ -1,0 +1,622 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Event - Riphah EMS{% endblock %}
+
+{% block breadcrumb_items %}
+<li class="breadcrumb-item"><a href="{% url 'all_events' %}">Events</a></li>
+<li class="breadcrumb-item active" aria-current="page">Create Event</li>
+{% endblock %}
+
+{% block page_header %}
+<i class="fas fa-plus-circle me-2 riphah-yellow"></i>Create New Event
+{% endblock %}
+
+{% block page_subtitle %}
+Organize and schedule events for Riphah University students and faculty
+{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="riphah-card">
+            <!-- Form Header -->
+            <div class="card-header-blue">
+                <div class="d-flex align-items-center">
+                    <div class="create-icon-circle me-3">
+                        <i class="fas fa-calendar-plus fa-lg"></i>
+                    </div>
+                    <div>
+                        <h4 class="mb-1">Event Creation Form</h4>
+                        <p class="mb-0 small opacity-75">Fill in all required details to create your event</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-body p-4">
+                {% if form.errors %}
+                <div class="alert alert-riphah alert-riphah-danger mb-4">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-exclamation-circle fa-2x me-3"></i>
+                        <div>
+                            <h6 class="mb-1">Form Validation Error</h6>
+                            <ul class="mb-0 small">
+                                {% for field, errors in form.errors.items %}
+                                    {% for error in errors %}
+                                        <li>{{ field|title }}: {{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Event Creation Form -->
+                <form method="post" enctype="multipart/form-data" id="eventForm">
+                    {% csrf_token %}
+                    
+                    <!-- Basic Information Grid -->
+                    <div class="grid-system grid-col-2 gap-4 mb-4">
+                        <div class="grid-item">
+                            <div class="grid-item-header mb-3">
+                                <div class="grid-item-icon">
+                                    <i class="fas fa-heading"></i>
+                                </div>
+                                <h5 class="grid-item-title">Basic Information</h5>
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="title" class="form-label fw-semibold text-riphah-blue">
+                                    <i class="fas fa-pen me-2"></i>Event Title *
+                                </label>
+                                <input type="text" class="form-control" id="title" name="title" 
+                                       placeholder="Enter event title" required
+                                       value="{{ form.title.value|default:'' }}">
+                                <div class="form-text small">Make it descriptive and engaging</div>
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="event_type" class="form-label fw-semibold text-riphah-blue">
+                                    <i class="fas fa-tag me-2"></i>Event Type *
+                                </label>
+                                <select class="form-select" id="event_type" name="event_type" required>
+                                    <option value="">Select event type</option>
+                                    <option value="academic" {% if form.event_type.value == 'academic' %}selected{% endif %}>Academic</option>
+                                    <option value="cultural" {% if form.event_type.value == 'cultural' %}selected{% endif %}>Cultural</option>
+                                    <option value="sports" {% if form.event_type.value == 'sports' %}selected{% endif %}>Sports</option>
+                                    <option value="workshop" {% if form.event_type.value == 'workshop' %}selected{% endif %}>Workshop</option>
+                                    <option value="seminar" {% if form.event_type.value == 'seminar' %}selected{% endif %}>Seminar</option>
+                                    <option value="competition" {% if form.event_type.value == 'competition' %}selected{% endif %}>Competition</option>
+                                    <option value="conference" {% if form.event_type.value == 'conference' %}selected{% endif %}>Conference</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="grid-item">
+                            <div class="grid-item-header mb-3">
+                                <div class="grid-item-icon">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                                <h5 class="grid-item-title">Event Media</h5>
+                            </div>
+                            
+                            <div class="form-group mb-4">
+                                <label for="featured_image" class="form-label fw-semibold text-riphah-blue">
+                                    <i class="fas fa-image me-2"></i>Featured Image
+                                </label>
+                                <input type="file" class="form-control" id="featured_image" name="featured_image" 
+                                       accept="image/*" onchange="previewImage(this)">
+                                <div class="form-text small">
+                                    Upload an attractive image for your event (Optional)
+                                </div>
+                            </div>
+                            
+                            <!-- Image Preview -->
+                            <div class="image-preview-container mt-3 text-center" style="display: none;">
+                                <div class="preview-label mb-2">
+                                    <small class="text-muted">Image Preview:</small>
+                                </div>
+                                <img id="imagePreview" class="img-fluid rounded" style="max-height: 150px; display: none;">
+                                <div class="mt-2">
+                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeImage()">
+                                        <i class="fas fa-trash me-1"></i>Remove Image
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Description Grid -->
+                    <div class="grid-system grid-col-1 mb-4">
+                        <div class="grid-item">
+                            <div class="grid-item-header mb-3">
+                                <div class="grid-item-icon">
+                                    <i class="fas fa-align-left"></i>
+                                </div>
+                                <h5 class="grid-item-title">Event Description</h5>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="description" class="form-label fw-semibold text-riphah-blue">
+                                    <i class="fas fa-file-alt me-2"></i>Detailed Description *
+                                </label>
+                                <textarea class="form-control" id="description" name="description" 
+                                          rows="5" placeholder="Describe your event in detail..." required>{{ form.description.value|default:'' }}</textarea>
+                                <div class="form-text small">
+                                    Include agenda, objectives, and key highlights
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Date & Time Grid -->
+                    <div class="grid-system grid-col-2 gap-4 mb-4">
+                        <div class="grid-item">
+                            <div class="grid-item-header mb-3">
+                                <div class="grid-item-icon">
+                                    <i class="fas fa-calendar-day"></i>
+                                </div>
+                                <h5 class="grid-item-title">Date & Time</h5>
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="date" class="form-label fw-semibold text-riphah-blue">
+                                    <i class="fas fa-calendar me-2"></i>Event Date *
+                                </label>
+                                <input type="date" class="form-control" id="date" name="date" 
+                                       required value="{{ form.date.value|default:'' }}">
+                                <div class="form-text small">Select the event date</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="time" class="form-label fw-semibold text-riphah-blue">
+                                    <i class="fas fa-clock me-2"></i>Event Time *
+                                </label>
+                                <input type="time" class="form-control" id="time" name="time" 
+                                       required value="{{ form.time.value|default:'' }}">
+                                <div class="form-text small">Set the starting time</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid-item">
+                            <div class="grid-item-header mb-3">
+                                <div class="grid-item-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <h5 class="grid-item-title">Capacity & Location</h5>
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="location" class="form-label fw-semibold text-riphah-blue">
+                                    <i class="fas fa-map-marker-alt me-2"></i>Location *
+                                </label>
+                                <input type="text" class="form-control" id="location" name="location" 
+                                       placeholder="Enter event venue" required
+                                       value="{{ form.location.value|default:'' }}">
+                                <div class="form-text small">e.g., Main Auditorium, Room 101, Sports Complex</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="max_participants" class="form-label fw-semibold text-riphah-blue">
+                                    <i class="fas fa-user-friends me-2"></i>Maximum Participants
+                                </label>
+                                <input type="number" class="form-control" id="max_participants" name="max_participants" 
+                                       placeholder="Enter maximum number of participants"
+                                       value="{{ form.max_participants.value|default:'100' }}" min="1">
+                                <div class="form-text small">Leave empty for unlimited participants</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Additional Details Grid -->
+                    <div class="grid-system grid-col-2 gap-4 mb-4">
+                        <div class="grid-item">
+                            <div class="grid-item-header mb-3">
+                                <div class="grid-item-icon">
+                                    <i class="fas fa-university"></i>
+                                </div>
+                                <h5 class="grid-item-title">Department & Venue</h5>
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="department" class="form-label fw-semibold text-riphah-blue">
+                                    <i class="fas fa-building me-2"></i>Department
+                                </label>
+                                <select class="form-select" id="department" name="department">
+                                    <option value="">All Departments</option>
+                                    {% for dept in departments %}
+                                    <option value="{{ dept.id }}" {% if form.department.value == dept.id %}selected{% endif %}>
+                                        {{ dept.name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                <div class="form-text small">Select department or leave for all departments</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="venue_details" class="form-label fw-semibold text-riphah-blue">
+                                    <i class="fas fa-map-signs me-2"></i>Venue Details
+                                </label>
+                                <textarea class="form-control" id="venue_details" name="venue_details" 
+                                          rows="3" placeholder="Additional venue information...">{{ form.venue_details.value|default:'' }}</textarea>
+                                <div class="form-text small">Room number, floor, directions, etc.</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid-item">
+                            <div class="grid-item-header mb-3">
+                                <div class="grid-item-icon">
+                                    <i class="fas fa-cogs"></i>
+                                </div>
+                                <h5 class="grid-item-title">Event Settings</h5>
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="registration_deadline" class="form-label fw-semibold text-riphah-blue">
+                                    <i class="fas fa-hourglass-end me-2"></i>Registration Deadline
+                                </label>
+                                <input type="datetime-local" class="form-control" id="registration_deadline" 
+                                       name="registration_deadline" 
+                                       value="{{ form.registration_deadline.value|default:'' }}">
+                                <div class="form-text small">Set deadline for registration (Optional)</div>
+                            </div>
+                            
+                            <div class="form-check mt-4">
+                                <input class="form-check-input" type="checkbox" id="is_registration_open" 
+                                       name="is_registration_open" value="true" checked>
+                                <label class="form-check-label" for="is_registration_open">
+                                    <i class="fas fa-user-plus me-2"></i>Open for registration immediately
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Form Actions -->
+                    <div class="grid-system grid-col-1">
+                        <div class="grid-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a href="{% url 'all_events' %}" class="btn btn-riphah-outline">
+                                    <i class="fas fa-times me-2"></i>Cancel
+                                </a>
+                                <button type="submit" class="btn btn-riphah-yellow px-5">
+                                    <i class="fas fa-calendar-plus me-2"></i>Create Event
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Guidelines Card -->
+        <div class="riphah-card mt-4">
+            <div class="card-header-blue">
+                <h5 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Event Creation Guidelines</h5>
+            </div>
+            <div class="card-body">
+                <div class="grid-system grid-col-3">
+                    <div class="grid-item">
+                        <div class="guideline-icon mb-3">
+                            <i class="fas fa-check-circle fa-2x riphah-yellow"></i>
+                        </div>
+                        <h6 class="text-riphah-blue fw-bold mb-2">Clear Title & Description</h6>
+                        <p class="text-muted small">Make your event title descriptive and provide detailed information.</p>
+                    </div>
+                    
+                    <div class="grid-item">
+                        <div class="guideline-icon mb-3">
+                            <i class="fas fa-check-circle fa-2x riphah-yellow"></i>
+                        </div>
+                        <h6 class="text-riphah-blue fw-bold mb-2">Accurate Timing</h6>
+                        <p class="text-muted small">Ensure date and time are correct to avoid confusion.</p>
+                    </div>
+                    
+                    <div class="grid-item">
+                        <div class="guideline-icon mb-3">
+                            <i class="fas fa-check-circle fa-2x riphah-yellow"></i>
+                        </div>
+                        <h6 class="text-riphah-blue fw-bold mb-2">Realistic Capacity</h6>
+                        <p class="text-muted small">Set appropriate participant limits based on venue capacity.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Create Event Page Specific Styles */
+    .create-icon-circle {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--riphah-blue), var(--riphah-blue-light));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+    }
+    
+    /* Form Styling */
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+    
+    .form-label {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .form-control, .form-select {
+        border: 2px solid #e0e0e0;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: var(--riphah-yellow);
+        box-shadow: 0 0 0 0.25rem rgba(255, 210, 0, 0.25);
+    }
+    
+    .form-text {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-top: 0.25rem;
+    }
+    
+    textarea.form-control {
+        resize: vertical;
+        min-height: 120px;
+    }
+    
+    /* Image Preview */
+    .image-preview-container {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        border: 2px dashed #dee2e6;
+    }
+    
+    .image-preview-container img {
+        max-width: 100%;
+        border-radius: 6px;
+    }
+    
+    /* Grid System */
+    .grid-system {
+        gap: 1.5rem;
+    }
+    
+    .grid-item {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+    }
+    
+    .grid-item:hover {
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+    }
+    
+    .grid-item-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--riphah-yellow-light);
+    }
+    
+    .grid-item-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--riphah-yellow);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+    }
+    
+    .grid-item-icon i {
+        color: var(--riphah-blue);
+        font-size: 1.2rem;
+    }
+    
+    .grid-item-title {
+        color: var(--riphah-blue);
+        font-weight: 600;
+        margin: 0;
+    }
+    
+    /* Checkbox Styling */
+    .form-check-input {
+        width: 1.2em;
+        height: 1.2em;
+        border: 2px solid #dee2e6;
+        cursor: pointer;
+    }
+    
+    .form-check-input:checked {
+        background-color: var(--riphah-blue);
+        border-color: var(--riphah-blue);
+    }
+    
+    .form-check-input:focus {
+        border-color: var(--riphah-yellow);
+        box-shadow: 0 0 0 0.25rem rgba(255, 210, 0, 0.25);
+    }
+    
+    .form-check-label {
+        color: var(--riphah-blue);
+        cursor: pointer;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+    }
+    
+    /* Guidelines */
+    .guideline-icon {
+        text-align: center;
+    }
+    
+    .guideline-icon i {
+        transition: all 0.3s ease;
+    }
+    
+    .grid-item:hover .guideline-icon i {
+        transform: scale(1.2);
+    }
+    
+    /* Button Styling */
+    .btn-riphah-yellow {
+        font-weight: 600;
+        font-size: 1.1rem;
+        padding: 0.75rem 2rem;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-riphah-yellow:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(255, 210, 0, 0.3);
+    }
+    
+    .btn-riphah-outline {
+        border: 2px solid var(--riphah-blue);
+        color: var(--riphah-blue);
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-riphah-outline:hover {
+        background: var(--riphah-blue);
+        color: white;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        .grid-system.grid-col-3 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .grid-system.grid-col-2 {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .grid-system.grid-col-3 {
+            grid-template-columns: 1fr;
+        }
+        
+        .grid-system.grid-col-2 {
+            grid-template-columns: 1fr;
+        }
+        
+        .create-icon-circle {
+            width: 50px;
+            height: 50px;
+            font-size: 1.3rem;
+        }
+        
+        .card-body {
+            padding: 1.5rem !important;
+        }
+        
+        .d-flex.justify-content-between {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .d-flex.justify-content-between .btn {
+            width: 100%;
+            text-align: center;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .grid-item {
+            padding: 1rem;
+        }
+        
+        .grid-item-header {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .grid-item-icon {
+            margin-right: 0;
+            margin-bottom: 1rem;
+        }
+        
+        .btn-riphah-yellow {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+        }
+    }
+</style>
+
+<script>
+    // Image Preview Functionality
+    function previewImage(input) {
+        const preview = document.getElementById('imagePreview');
+        const container = document.querySelector('.image-preview-container');
+        
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+                container.style.display = 'block';
+            }
+            
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    
+    function removeImage() {
+        const input = document.getElementById('featured_image');
+        const preview = document.getElementById('imagePreview');
+        const container = document.querySelector('.image-preview-container');
+        
+        input.value = '';
+        preview.src = '';
+        preview.style.display = 'none';
+        container.style.display = 'none';
+    }
+    
+    // Set minimum date to today
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date().toISOString().split('T')[0];
+        const dateInput = document.getElementById('date');
+        
+        if (dateInput) {
+            dateInput.min = today;
+            
+            // If no value is set, set it to today
+            if (!dateInput.value) {
+                dateInput.value = today;
+            }
+        }
+        
+        // Set default time to next hour
+        const timeInput = document.getElementById('time');
+        if (timeInput && !timeInput.value) {
+            const now = new Date();
+            const nextHour = new Date(now.getTime() + 60 * 60 * 1000);
+            const hours = String(nextHour.getHours()).padStart(2, '0');
+            const minutes = String(nextHour.getMinutes()).padStart(2, '0');
+            timeInput.value = `${hours}:${minutes}`;
+        }
+    });
+</script>
+
+{% endblock %}

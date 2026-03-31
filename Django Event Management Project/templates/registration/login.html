@@ -1,0 +1,453 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - Riphah EMS{% endblock %}
+
+{% block breadcrumb_items %}
+<li class="breadcrumb-item active" aria-current="page">Login</li>
+{% endblock %}
+
+{% block page_header %}
+<i class="fas fa-sign-in-alt me-2 riphah-yellow"></i>Login
+{% endblock %}
+
+{% block page_subtitle %}
+Access your Riphah Event Management System account
+{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-6 col-lg-5">
+        <div class="riphah-card">
+            <!-- Login Form Card -->
+            <div class="card-header-blue text-center">
+                <div class="d-flex align-items-center justify-content-center">
+                    <div class="login-icon-circle me-3">
+                        <i class="fas fa-user-lock fa-lg"></i>
+                    </div>
+                    <div>
+                        <h4 class="mb-0">Welcome Back</h4>
+                        <p class="mb-0 small opacity-75">Sign in to your account</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-body p-4">
+                <!-- Error Messages -->
+                {% if form.errors %}
+                <div class="alert alert-riphah alert-riphah-danger mb-4 animate__animated animate__shakeX">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-exclamation-circle fa-2x me-3"></i>
+                        <div>
+                            <h6 class="mb-1">Invalid Credentials</h6>
+                            <p class="mb-0 small">Please check your username and password.</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-riphah alert-riphah-{{ message.tags }} mb-4">
+                    <i class="fas fa-info-circle me-2"></i>{{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
+                
+                <!-- Login Form -->
+                <form method="post" action="{% url 'login' %}" id="loginForm">
+                    {% csrf_token %}
+                    
+                    <!-- Username Field -->
+                    <div class="form-group mb-4">
+                        <label for="username" class="form-label fw-semibold text-riphah-blue mb-2">
+                            <i class="fas fa-user me-2"></i>Username or Email
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-riphah-yellow">
+                                <i class="fas fa-user text-riphah-blue"></i>
+                            </span>
+                            <input type="text" class="form-control" id="username" name="username" 
+                                   placeholder="Enter your username or email" required
+                                   autocomplete="username" autofocus>
+                        </div>
+                        <div class="form-text">
+                            Use your Riphah username or registered email
+                        </div>
+                    </div>
+                    
+                    <!-- Password Field -->
+                    <div class="form-group mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label for="password" class="form-label fw-semibold text-riphah-blue mb-0">
+                                <i class="fas fa-lock me-2"></i>Password
+                            </label>
+                            <a href="#" class="text-decoration-none small text-riphah-blue" id="showPassword">
+                                <i class="fas fa-eye me-1"></i>Show
+                            </a>
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-text bg-riphah-yellow">
+                                <i class="fas fa-key text-riphah-blue"></i>
+                            </span>
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   placeholder="Enter your password" required
+                                   autocomplete="current-password">
+                        </div>
+                    </div>
+                    
+                    <!-- Remember Me & Forgot Password -->
+                    <div class="row mb-4">
+                        <div class="col-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="remember" name="remember">
+                                <label class="form-check-label small" for="remember">
+                                    Remember me
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-6 text-end">
+                            <a href="#" class="text-decoration-none small text-riphah-blue">
+                                <i class="fas fa-question-circle me-1"></i>Forgot Password?
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div class="d-grid mb-4">
+                        <button type="submit" class="btn btn-riphah-yellow btn-lg py-3">
+                            <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Divider -->
+                <div class="divider d-flex align-items-center mb-4">
+                    <span class="divider-line"></span>
+                    <span class="divider-text px-3">Or continue with</span>
+                    <span class="divider-line"></span>
+                </div>
+                
+                <!-- Quick Login Info -->
+                <div class="alert alert-riphah alert-riphah-info mb-4">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-lightbulb fa-2x me-3 text-riphah-yellow"></i>
+                        <div>
+                            <h6 class="mb-1">Login Credentials</h6>
+                            <p class="mb-0 small">Use your Riphah University credentials or registered email.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Registration Link -->
+                <div class="text-center mt-4 pt-3 border-top">
+                    <p class="text-muted mb-3">Don't have an account yet?</p>
+                    <a href="{% url 'register' %}" class="btn btn-riphah-blue px-5">
+                        <i class="fas fa-user-plus me-2"></i>Create New Account
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Security Info -->
+        <div class="riphah-card mt-4">
+            <div class="card-body text-center">
+                <div class="row">
+                    <div class="col-md-4 mb-3 mb-md-0">
+                        <div class="security-item">
+                            <i class="fas fa-shield-alt fa-2x riphah-yellow mb-2"></i>
+                            <p class="small mb-0">Secure Login</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3 mb-md-0">
+                        <div class="security-item">
+                            <i class="fas fa-lock fa-2x riphah-yellow mb-2"></i>
+                            <p class="small mb-0">Data Protected</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="security-item">
+                            <i class="fas fa-user-check fa-2x riphah-yellow mb-2"></i>
+                            <p class="small mb-0">Verified Users</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Login Page Specific Styles */
+    .login-icon-circle {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--riphah-yellow), #FFC107);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--riphah-blue);
+        font-size: 1.5rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        font-size: 0.95rem;
+        font-weight: 600;
+    }
+    
+    .input-group-text {
+        background-color: var(--riphah-yellow);
+        border: 2px solid var(--riphah-yellow);
+        color: var(--riphah-blue);
+        font-weight: 600;
+        padding: 0.75rem 1rem;
+    }
+    
+    .form-control {
+        border: 2px solid #e0e0e0;
+        padding: 0.75rem 1rem;
+        border-radius: 0 8px 8px 0;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        border-color: var(--riphah-yellow);
+        box-shadow: 0 0 0 0.25rem rgba(255, 210, 0, 0.25);
+    }
+    
+    .form-text {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-top: 0.25rem;
+    }
+    
+    /* Divider */
+    .divider {
+        position: relative;
+    }
+    
+    .divider-line {
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #dee2e6, transparent);
+    }
+    
+    .divider-text {
+        color: #6c757d;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    
+    /* Form Check */
+    .form-check-input {
+        width: 1.1em;
+        height: 1.1em;
+        border: 2px solid #dee2e6;
+    }
+    
+    .form-check-input:checked {
+        background-color: var(--riphah-blue);
+        border-color: var(--riphah-blue);
+    }
+    
+    .form-check-input:focus {
+        border-color: var(--riphah-yellow);
+        box-shadow: 0 0 0 0.25rem rgba(255, 210, 0, 0.25);
+    }
+    
+    .form-check-label {
+        color: var(--riphah-blue);
+        font-weight: 500;
+    }
+    
+    /* Security Items */
+    .security-item {
+        padding: 15px;
+        transition: all 0.3s ease;
+    }
+    
+    .security-item:hover {
+        transform: translateY(-5px);
+    }
+    
+    .security-item i {
+        transition: all 0.3s ease;
+    }
+    
+    .security-item:hover i {
+        transform: scale(1.2);
+    }
+    
+    /* Button Styling */
+    .btn-riphah-yellow {
+        font-weight: 600;
+        font-size: 1.1rem;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-riphah-yellow:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(255, 210, 0, 0.3);
+    }
+    
+    .btn-riphah-blue {
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-riphah-blue:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(0, 49, 91, 0.2);
+    }
+    
+    /* Link Styling */
+    a.text-riphah-blue {
+        transition: all 0.3s ease;
+    }
+    
+    a.text-riphah-blue:hover {
+        color: #002244 !important;
+        text-decoration: underline !important;
+    }
+    
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .riphah-card {
+        animation: fadeInUp 0.6s ease-out;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .login-icon-circle {
+            width: 50px;
+            height: 50px;
+            font-size: 1.3rem;
+        }
+        
+        .card-body {
+            padding: 1.5rem !important;
+        }
+        
+        .btn-lg {
+            padding: 0.75rem 1.5rem !important;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .col-md-6 {
+            padding: 0 10px;
+        }
+        
+        .security-item {
+            padding: 10px;
+        }
+        
+        .divider-text {
+            font-size: 0.8rem;
+        }
+    }
+</style>
+
+<script>
+    // Show/Hide Password Toggle
+    document.addEventListener('DOMContentLoaded', function() {
+        const showPasswordBtn = document.getElementById('showPassword');
+        const passwordInput = document.getElementById('password');
+        let passwordVisible = false;
+        
+        if (showPasswordBtn) {
+            showPasswordBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                passwordVisible = !passwordVisible;
+                
+                if (passwordVisible) {
+                    passwordInput.type = 'text';
+                    showPasswordBtn.innerHTML = '<i class="fas fa-eye-slash me-1"></i>Hide';
+                } else {
+                    passwordInput.type = 'password';
+                    showPasswordBtn.innerHTML = '<i class="fas fa-eye me-1"></i>Show';
+                }
+            });
+        }
+        
+        // Form submission animation
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.addEventListener('submit', function() {
+                const submitBtn = this.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Signing In...';
+                    submitBtn.disabled = true;
+                }
+            });
+        }
+        
+        // Auto-focus username field
+        const usernameInput = document.getElementById('username');
+        if (usernameInput) {
+            usernameInput.focus();
+        }
+        
+        // Add ripple effect to buttons
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.cssText = `
+                    position: absolute;
+                    border-radius: 50%;
+                    background: rgba(255, 255, 255, 0.7);
+                    transform: scale(0);
+                    animation: ripple-animation 0.6s linear;
+                    width: ${size}px;
+                    height: ${size}px;
+                    left: ${x}px;
+                    top: ${y}px;
+                `;
+                
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+    });
+    
+    // CSS for ripple animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+        
+        .btn {
+            position: relative;
+            overflow: hidden;
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+
+{% endblock %}

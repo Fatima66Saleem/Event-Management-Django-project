@@ -1,0 +1,538 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Faculty - Riphah EMS{% endblock %}
+
+{% block breadcrumb_items %}
+<li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Admin Dashboard</a></li>
+<li class="breadcrumb-item active" aria-current="page">Manage Faculty</li>
+{% endblock %}
+
+{% block page_header %}
+<i class="fas fa-user-tie me-2 riphah-yellow"></i>Manage Faculty Approvals
+{% endblock %}
+
+{% block page_subtitle %}
+Review and approve faculty registration requests for event management
+{% endblock %}
+
+{% block content %}
+
+<!-- Stats Overview -->
+<div class="grid-system grid-col-3 mb-5">
+    <div class="grid-item">
+        <div class="grid-item-header">
+            <div class="grid-item-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <h4 class="grid-item-title">{{ pending_count }}</h4>
+        </div>
+        <div class="grid-item-content">
+            <p class="text-muted mb-0">Pending Approvals</p>
+        </div>
+    </div>
+    
+    <div class="grid-item">
+        <div class="grid-item-header">
+            <div class="grid-item-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h4 class="grid-item-title">{{ approved_count }}</h4>
+        </div>
+        <div class="grid-item-content">
+            <p class="text-muted mb-0">Approved Faculty</p>
+        </div>
+    </div>
+    
+    <div class="grid-item">
+        <div class="grid-item-header">
+            <div class="grid-item-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <h4 class="grid-item-title">{{ total_count }}</h4>
+        </div>
+        <div class="grid-item-content">
+            <p class="text-muted mb-0">Total Faculty</p>
+        </div>
+    </div>
+</div>
+
+<!-- Pending Approvals -->
+<div class="riphah-card mb-5">
+    <div class="card-header-blue">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-clock me-2"></i>Pending Faculty Approvals</h5>
+            <span class="badge bg-warning">{{ pending_count }} Pending</span>
+        </div>
+    </div>
+    <div class="card-body">
+        {% if pending_faculty %}
+        <div class="faculty-approval-grid">
+            {% for faculty in pending_faculty %}
+            <div class="approval-card mb-4">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <div class="faculty-info">
+                            <div class="faculty-header mb-3">
+                                <div class="faculty-avatar me-3">
+                                    <i class="fas fa-user-tie fa-2x riphah-yellow"></i>
+                                </div>
+                                <div>
+                                    <h5 class="text-riphah-blue fw-bold mb-1">{{ faculty.user.get_full_name }}</h5>
+                                    <p class="text-muted small mb-0">
+                                        <i class="fas fa-envelope me-1"></i>{{ faculty.user.email }}
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="faculty-details row">
+                                <div class="col-md-6 mb-2">
+                                    <div class="detail-item">
+                                        <i class="fas fa-phone riphah-yellow me-2"></i>
+                                        <span class="detail-label">Phone:</span>
+                                        <span class="detail-value">{{ faculty.phone }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <div class="detail-item">
+                                        <i class="fas fa-id-card riphah-yellow me-2"></i>
+                                        <span class="detail-label">Employee ID:</span>
+                                        <span class="detail-value">{{ faculty.employee_id }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <div class="detail-item">
+                                        <i class="fas fa-university riphah-yellow me-2"></i>
+                                        <span class="detail-label">Department:</span>
+                                        <span class="detail-value">{{ faculty.department.name }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <div class="detail-item">
+                                        <i class="fas fa-user-tag riphah-yellow me-2"></i>
+                                        <span class="detail-label">Designation:</span>
+                                        <span class="detail-value">{{ faculty.designation }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4">
+                        <div class="approval-actions text-lg-end">
+                            <div class="action-buttons">
+                                <form method="post" class="d-inline-block">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="profile_id" value="{{ faculty.id }}">
+                                    
+                                    <button type="submit" name="action" value="approve" 
+                                            class="btn btn-success mb-2 w-100">
+                                        <i class="fas fa-check-circle me-2"></i>Approve
+                                    </button>
+                                    
+                                    <button type="submit" name="action" value="reject" 
+                                            class="btn btn-outline-danger w-100"
+                                            onclick="return confirm('Are you sure you want to reject this faculty application?')">
+                                        <i class="fas fa-times-circle me-2"></i>Reject
+                                    </button>
+                                </form>
+                            </div>
+                            
+                            <div class="registration-date mt-3">
+                                <small class="text-muted">
+                                    <i class="far fa-clock me-1"></i>
+                                    Applied {{ faculty.created_at|timesince }} ago
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-check-circle fa-4x text-muted mb-3"></i>
+            <h5 class="text-riphah-blue mb-2">No Pending Approvals</h5>
+            <p class="text-muted">All faculty applications have been reviewed.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Approved Faculty -->
+<div class="riphah-card">
+    <div class="card-header-blue">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-check-circle me-2"></i>Approved Faculty Members</h5>
+            <span class="badge bg-success">{{ approved_count }} Approved</span>
+        </div>
+    </div>
+    <div class="card-body">
+        {% if approved_faculty %}
+        <div class="approved-faculty-grid">
+            <div class="row">
+                {% for faculty in approved_faculty %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="faculty-card">
+                        <div class="faculty-card-header">
+                            <div class="faculty-avatar">
+                                <i class="fas fa-user-tie fa-2x riphah-yellow"></i>
+                            </div>
+                            <div class="faculty-status">
+                                <span class="badge bg-success">Approved</span>
+                            </div>
+                        </div>
+                        
+                        <div class="faculty-card-body">
+                            <h6 class="text-riphah-blue fw-bold mb-2">{{ faculty.user.get_full_name }}</h6>
+                            <p class="text-muted small mb-2">
+                                <i class="fas fa-envelope me-1"></i>{{ faculty.user.email }}
+                            </p>
+                            
+                            <div class="faculty-card-details">
+                                <p class="mb-1">
+                                    <i class="fas fa-university riphah-yellow me-2"></i>
+                                    <small>{{ faculty.department.name }}</small>
+                                </p>
+                                <p class="mb-1">
+                                    <i class="fas fa-user-tag riphah-yellow me-2"></i>
+                                    <small>{{ faculty.designation }}</small>
+                                </p>
+                                <p class="mb-0">
+                                    <i class="fas fa-id-card riphah-yellow me-2"></i>
+                                    <small>ID: {{ faculty.employee_id }}</small>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="faculty-card-footer">
+                            <small class="text-muted">
+                                <i class="far fa-calendar-check me-1"></i>
+                                Approved {{ faculty.updated_at|date:"M d, Y" }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% else %}
+        <div class="text-center py-4">
+            <i class="fas fa-users fa-3x text-muted mb-3"></i>
+            <h5 class="text-riphah-blue mb-2">No Approved Faculty Yet</h5>
+            <p class="text-muted">Approve faculty applications to see them listed here.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Back to Dashboard -->
+<div class="text-center mt-5">
+    <a href="{% url 'admin_dashboard' %}" class="btn btn-riphah-outline">
+        <i class="fas fa-arrow-left me-2"></i>Back to Admin Dashboard
+    </a>
+</div>
+
+<style>
+    /* Manage Faculty Page Specific Styles */
+    
+    /* Stats Grid */
+    .grid-system {
+        gap: 1.5rem;
+    }
+    
+    .grid-item {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        border: 1px solid #f0f0f0;
+    }
+    
+    .grid-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 49, 91, 0.1);
+        border-color: var(--riphah-yellow);
+    }
+    
+    .grid-item-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    
+    .grid-item-icon {
+        width: 50px;
+        height: 50px;
+        background: var(--riphah-yellow);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+    }
+    
+    .grid-item-icon i {
+        color: var(--riphah-blue);
+        font-size: 1.3rem;
+    }
+    
+    .grid-item-title {
+        color: var(--riphah-blue);
+        font-weight: 700;
+        font-size: 2rem;
+        margin: 0;
+    }
+    
+    .grid-item-content {
+        color: #666;
+    }
+    
+    /* Approval Cards */
+    .approval-card {
+        background: white;
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .approval-card:hover {
+        border-color: var(--riphah-yellow);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    }
+    
+    .faculty-header {
+        display: flex;
+        align-items: center;
+    }
+    
+    .faculty-avatar {
+        width: 60px;
+        height: 60px;
+        background: rgba(255, 210, 0, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .faculty-avatar i {
+        color: var(--riphah-yellow);
+    }
+    
+    .faculty-details {
+        padding-left: 75px;
+    }
+    
+    .detail-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+    
+    .detail-label {
+        font-weight: 600;
+        color: var(--riphah-blue);
+        margin-right: 0.5rem;
+        min-width: 100px;
+    }
+    
+    .detail-value {
+        color: #666;
+    }
+    
+    .approval-actions .btn {
+        min-width: 120px;
+    }
+    
+    /* Approved Faculty Cards */
+    .faculty-card {
+        background: white;
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+    
+    .faculty-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 49, 91, 0.1);
+        border-color: var(--riphah-yellow);
+    }
+    
+    .faculty-card-header {
+        background: linear-gradient(135deg, rgba(0, 49, 91, 0.05), rgba(255, 210, 0, 0.05));
+        padding: 1.5rem 1.5rem 1rem;
+        position: relative;
+    }
+    
+    .faculty-card-header .faculty-avatar {
+        width: 50px;
+        height: 50px;
+        margin-bottom: 1rem;
+    }
+    
+    .faculty-status {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+    }
+    
+    .faculty-card-body {
+        padding: 1rem 1.5rem;
+    }
+    
+    .faculty-card-details {
+        background: #f8f9fa;
+        padding: 0.75rem;
+        border-radius: 8px;
+        margin-top: 1rem;
+    }
+    
+    .faculty-card-footer {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid #e9ecef;
+        background: #f8f9fa;
+    }
+    
+    /* Button Styling */
+    .btn-success {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        border: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-success:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(40, 167, 69, 0.3);
+    }
+    
+    .btn-outline-danger {
+        border: 2px solid #dc3545;
+        color: #dc3545;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-outline-danger:hover {
+        background: #dc3545;
+        color: white;
+    }
+    
+    .btn-riphah-outline {
+        border: 2px solid var(--riphah-blue);
+        color: var(--riphah-blue);
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-riphah-outline:hover {
+        background: var(--riphah-blue);
+        color: white;
+    }
+    
+    /* Badge Styling */
+    .badge {
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+    }
+    
+    .bg-warning {
+        background: linear-gradient(135deg, #ffc107, #ffca2c) !important;
+        color: #212529 !important;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        .grid-system.grid-col-3 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .faculty-details {
+            padding-left: 0;
+        }
+        
+        .approval-actions {
+            margin-top: 1rem;
+            text-align: left !important;
+        }
+        
+        .approval-actions .btn {
+            width: auto;
+            min-width: 110px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .grid-system.grid-col-3 {
+            grid-template-columns: 1fr;
+        }
+        
+        .grid-item-title {
+            font-size: 1.8rem;
+        }
+        
+        .faculty-header {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .faculty-avatar {
+            margin-bottom: 1rem;
+            margin-right: 0;
+        }
+        
+        .faculty-details .col-md-6 {
+            width: 100%;
+        }
+        
+        .approved-faculty-grid .col-md-6 {
+            width: 100%;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .grid-item {
+            padding: 1rem;
+        }
+        
+        .grid-item-icon {
+            width: 40px;
+            height: 40px;
+        }
+        
+        .grid-item-icon i {
+            font-size: 1.1rem;
+        }
+        
+        .approval-card {
+            padding: 1rem;
+        }
+        
+        .detail-item {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .detail-label {
+            min-width: auto;
+            margin-bottom: 0.25rem;
+        }
+        
+        .approval-actions .btn {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+        
+        .faculty-card {
+            margin-bottom: 1rem;
+        }
+    }
+</style>
+
+{% endblock %}

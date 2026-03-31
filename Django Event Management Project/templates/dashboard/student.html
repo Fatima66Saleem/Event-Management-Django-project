@@ -1,0 +1,734 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Dashboard - Riphah EMS{% endblock %}
+
+{% block breadcrumb_items %}
+<li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+{% endblock %}
+
+{% block page_header %}
+<i class="fas fa-graduation-cap me-2 riphah-yellow"></i>Student Dashboard
+{% endblock %}
+
+{% block page_subtitle %}
+Welcome back, {{ user.get_full_name|default:user.username }}
+{% endblock %}
+
+{% block content %}
+
+<!-- Stats Overview -->
+<div class="grid-system grid-col-4 mb-5">
+    <div class="grid-item">
+        <div class="grid-item-header">
+            <div class="grid-item-icon">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <h4 class="grid-item-title">{{ total_registrations }}</h4>
+        </div>
+        <div class="grid-item-content">
+            <p class="text-muted mb-0">Total Registrations</p>
+        </div>
+    </div>
+    
+    <div class="grid-item">
+        <div class="grid-item-header">
+            <div class="grid-item-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h4 class="grid-item-title">{{ confirmed_registrations }}</h4>
+        </div>
+        <div class="grid-item-content">
+            <p class="text-muted mb-0">Confirmed Events</p>
+        </div>
+    </div>
+    
+    <div class="grid-item">
+        <div class="grid-item-header">
+            <div class="grid-item-icon">
+                <i class="fas fa-star"></i>
+            </div>
+            <h4 class="grid-item-title">{{ reviews_count }}</h4>
+        </div>
+        <div class="grid-item-content">
+            <p class="text-muted mb-0">Reviews Given</p>
+        </div>
+    </div>
+    
+    <div class="grid-item">
+        <div class="grid-item-header">
+            <div class="grid-item-icon">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <h4 class="grid-item-title">{{ certificates_count }}</h4>
+        </div>
+        <div class="grid-item-content">
+            <p class="text-muted mb-0">Certificates Earned</p>
+        </div>
+    </div>
+</div>
+
+<!-- Notifications -->
+{% if notifications %}
+<div class="riphah-card mb-5">
+    <div class="card-header-blue">
+        <h5 class="mb-0"><i class="fas fa-bell me-2"></i>Recent Notifications</h5>
+    </div>
+    <div class="card-body">
+        <div class="notifications-list">
+            {% for notification in notifications %}
+            <div class="notification-item {% if not notification.read %}unread{% endif %} mb-3">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <div class="notification-icon">
+                            <i class="fas 
+                                {% if notification.notification_type == 'registration' %}fa-user-check
+                                {% elif notification.notification_type == 'event_update' %}fa-calendar-alt
+                                {% elif notification.notification_type == 'certificate' %}fa-award
+                                {% else %}fa-info-circle{% endif %} fa-lg">
+                            </i>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="notification-content">
+                            <h6 class="mb-1">{{ notification.title }}</h6>
+                            <p class="mb-1 text-muted small">{{ notification.message }}</p>
+                            <small class="text-muted">
+                                <i class="far fa-clock me-1"></i>{{ notification.created_at|timesince }} ago
+                            </small>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        {% if not notification.read %}
+                        <span class="badge bg-danger">New</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-3">
+            <a href="#" class="btn btn-sm btn-riphah-outline">View All Notifications</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="row">
+    <!-- Main Content -->
+    <div class="col-lg-8">
+        <!-- My Event Registrations -->
+        <div class="riphah-card mb-4">
+            <div class="card-header-blue">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-calendar-check me-2"></i>My Event Registrations</h5>
+                    <span class="badge bg-riphah-yellow text-riphah-blue">{{ registrations|length }} Events</span>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if registrations %}
+                <div class="registrations-list">
+                    {% for registration in registrations %}
+                    <div class="registration-item mb-3 pb-3 border-bottom">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <h6 class="text-riphah-blue fw-bold mb-1">
+                                    <a href="{% url 'event_detail' registration.event.id %}" class="text-decoration-none">
+                                        {{ registration.event.title }}
+                                    </a>
+                                </h6>
+                                <div class="event-meta small mb-2">
+                                    <span class="text-muted">
+                                        <i class="fas fa-calendar-day me-1"></i>{{ registration.event.date }}
+                                    </span>
+                                    <span class="text-muted ms-3">
+                                        <i class="fas fa-clock me-1"></i>{{ registration.event.time }}
+                                    </span>
+                                    <span class="text-muted ms-3">
+                                        <i class="fas fa-map-marker-alt me-1"></i>{{ registration.event.location }}
+                                    </span>
+                                </div>
+                                <div class="event-type-badges">
+                                    <span class="badge bg-secondary me-2">{{ registration.event.get_event_type_display }}</span>
+                                    {% if registration.event.department %}
+                                    <span class="badge bg-light text-dark">{{ registration.event.department.name }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <div class="registration-status">
+                                    <span class="status-badge badge 
+                                        {% if registration.status == 'confirmed' %}bg-success
+                                        {% elif registration.status == 'pending' %}bg-warning text-dark
+                                        {% elif registration.status == 'cancelled' %}bg-danger
+                                        {% else %}bg-secondary{% endif %}">
+                                        {{ registration.status|title }}
+                                    </span>
+                                    <p class="text-muted small mb-0 mt-1">
+                                        <i class="far fa-calendar me-1"></i>
+                                        {{ registration.registration_date|date:"M d, Y" }}
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-3 text-end">
+                                {% if registration.status == 'confirmed' %}
+                                <div class="btn-group" role="group">
+                                    <a href="{% url 'event_detail' registration.event.id %}" 
+                                       class="btn btn-sm btn-riphah-outline">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <form method="post" action="{% url 'cancel_registration' registration.id %}" 
+                                          class="d-inline" onsubmit="return confirm('Are you sure you want to cancel this registration?')">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </form>
+                                    {% if registration.event.date < today %}
+                                    <a href="#" class="btn btn-sm btn-riphah-yellow">
+                                        <i class="fas fa-star"></i>
+                                    </a>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                    <h5 class="text-riphah-blue mb-2">No Event Registrations</h5>
+                    <p class="text-muted mb-3">You haven't registered for any events yet.</p>
+                    <a href="{% url 'all_events' %}" class="btn btn-riphah-yellow">
+                        <i class="fas fa-search me-2"></i>Browse Events
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Upcoming Events -->
+        {% if upcoming_events %}
+        <div class="riphah-card">
+            <div class="card-header-blue">
+                <h5 class="mb-0"><i class="fas fa-clock me-2"></i>Upcoming Events You Might Like</h5>
+            </div>
+            <div class="card-body">
+                <div class="grid-system grid-col-2">
+                    {% for event in upcoming_events %}
+                    <div class="grid-item">
+                        <div class="upcoming-event-card">
+                            <h6 class="text-riphah-blue fw-bold mb-2">{{ event.title }}</h6>
+                            <div class="event-details small mb-3">
+                                <p class="mb-1 text-muted">
+                                    <i class="fas fa-calendar-day me-2"></i>{{ event.date }}
+                                </p>
+                                <p class="mb-1 text-muted">
+                                    <i class="fas fa-clock me-2"></i>{{ event.time }}
+                                </p>
+                                <p class="mb-0 text-muted">
+                                    <i class="fas fa-map-marker-alt me-2"></i>{{ event.location }}
+                                </p>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-riphah-yellow text-riphah-blue">{{ event.get_event_type_display }}</span>
+                                <a href="{% url 'event_detail' event.id %}" class="btn btn-sm btn-riphah-outline">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- Quick Actions -->
+        <div class="riphah-card mb-4">
+            <div class="card-header-blue">
+                <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="quick-actions-list">
+                    <a href="{% url 'all_events' %}" class="quick-action-item mb-3">
+                        <div class="quick-action-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="quick-action-content">
+                            <h6 class="mb-1">Browse Events</h6>
+                            <p class="mb-0 small text-muted">Discover new events to participate in</p>
+                        </div>
+                    </a>
+                    
+                    <a href="{% url 'calendar' %}" class="quick-action-item mb-3">
+                        <div class="quick-action-icon">
+                            <i class="fas fa-calendar"></i>
+                        </div>
+                        <div class="quick-action-content">
+                            <h6 class="mb-1">View Calendar</h6>
+                            <p class="mb-0 small text-muted">Check events in calendar format</p>
+                        </div>
+                    </a>
+                    
+                    <a href="{% url 'profile' %}" class="quick-action-item mb-3">
+                        <div class="quick-action-icon">
+                            <i class="fas fa-user-edit"></i>
+                        </div>
+                        <div class="quick-action-content">
+                            <h6 class="mb-1">Update Profile</h6>
+                            <p class="mb-0 small text-muted">Keep your information up to date</p>
+                        </div>
+                    </a>
+                    
+                    <a href="{% url 'dashboard' %}" class="quick-action-item">
+                        <div class="quick-action-icon">
+                            <i class="fas fa-certificate"></i>
+                        </div>
+                        <div class="quick-action-content">
+                            <h6 class="mb-1">My Certificates</h6>
+                            <p class="mb-0 small text-muted">View and download your certificates</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Event Categories -->
+        <div class="riphah-card mb-4">
+            <div class="card-header-blue">
+                <h5 class="mb-0"><i class="fas fa-tags me-2"></i>Event Categories</h5>
+            </div>
+            <div class="card-body">
+                <div class="categories-list">
+                    <a href="{% url 'all_events' %}?event_type=academic" class="category-item">
+                        <i class="fas fa-graduation-cap me-2 text-primary"></i>
+                        <span>Academic Events</span>
+                        <span class="badge bg-light text-dark ms-auto">{{ academic_count }}</span>
+                    </a>
+                    
+                    <a href="{% url 'all_events' %}?event_type=cultural" class="category-item">
+                        <i class="fas fa-music me-2 text-success"></i>
+                        <span>Cultural Events</span>
+                        <span class="badge bg-light text-dark ms-auto">{{ cultural_count }}</span>
+                    </a>
+                    
+                    <a href="{% url 'all_events' %}?event_type=sports" class="category-item">
+                        <i class="fas fa-futbol me-2 text-warning"></i>
+                        <span>Sports Events</span>
+                        <span class="badge bg-light text-dark ms-auto">{{ sports_count }}</span>
+                    </a>
+                    
+                    <a href="{% url 'all_events' %}?event_type=workshop" class="category-item">
+                        <i class="fas fa-chalkboard-teacher me-2 text-info"></i>
+                        <span>Workshops</span>
+                        <span class="badge bg-light text-dark ms-auto">{{ workshop_count }}</span>
+                    </a>
+                    
+                    <a href="{% url 'all_events' %}?event_type=seminar" class="category-item">
+                        <i class="fas fa-chalkboard me-2 text-danger"></i>
+                        <span>Seminars</span>
+                        <span class="badge bg-light text-dark ms-auto">{{ seminar_count }}</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Profile Summary -->
+        <div class="riphah-card">
+            <div class="card-header-blue">
+                <h5 class="mb-0"><i class="fas fa-user-circle me-2"></i>Profile Summary</h5>
+            </div>
+            <div class="card-body">
+                <div class="profile-summary text-center">
+                    <div class="profile-avatar mb-3">
+                        <i class="fas fa-user-circle fa-4x riphah-yellow"></i>
+                    </div>
+                    <h5 class="text-riphah-blue fw-bold mb-2">{{ user.get_full_name|default:user.username }}</h5>
+                    <p class="text-muted small mb-3">
+                        <i class="fas fa-envelope me-1"></i>{{ user.email }}
+                    </p>
+                    
+                    <div class="profile-stats">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="stat-item">
+                                    <div class="stat-value">{{ total_registrations }}</div>
+                                    <div class="stat-label small">Events</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="stat-item">
+                                    <div class="stat-value">{{ reviews_count }}</div>
+                                    <div class="stat-label small">Reviews</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <a href="{% url 'profile' %}" class="btn btn-sm btn-riphah-outline">
+                            <i class="fas fa-edit me-2"></i>Edit Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Student Dashboard Specific Styles */
+    
+    /* Stats Overview */
+    .grid-system {
+        gap: 1.5rem;
+    }
+    
+    .grid-item {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        border: 1px solid #f0f0f0;
+    }
+    
+    .grid-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 49, 91, 0.1);
+        border-color: var(--riphah-yellow);
+    }
+    
+    .grid-item-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    
+    .grid-item-icon {
+        width: 50px;
+        height: 50px;
+        background: var(--riphah-yellow);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+    }
+    
+    .grid-item-icon i {
+        color: var(--riphah-blue);
+        font-size: 1.3rem;
+    }
+    
+    .grid-item-title {
+        color: var(--riphah-blue);
+        font-weight: 700;
+        font-size: 2rem;
+        margin: 0;
+    }
+    
+    .grid-item-content {
+        color: #666;
+    }
+    
+    /* Notifications */
+    .notifications-list {
+        max-height: 300px;
+        overflow-y: auto;
+        padding-right: 10px;
+    }
+    
+    .notifications-list::-webkit-scrollbar {
+        width: 4px;
+    }
+    
+    .notifications-list::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 2px;
+    }
+    
+    .notifications-list::-webkit-scrollbar-thumb {
+        background: var(--riphah-yellow);
+        border-radius: 2px;
+    }
+    
+    .notification-item {
+        padding: 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    .notification-item:hover {
+        background: #f8f9fa;
+    }
+    
+    .notification-item.unread {
+        background: rgba(0, 49, 91, 0.05);
+        border-left: 4px solid var(--riphah-blue);
+    }
+    
+    .notification-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--riphah-yellow-light);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .notification-icon i {
+        color: var(--riphah-blue);
+    }
+    
+    /* Registrations */
+    .registrations-list {
+        max-height: 400px;
+        overflow-y: auto;
+        padding-right: 10px;
+    }
+    
+    .registration-item {
+        transition: all 0.3s ease;
+    }
+    
+    .registration-item:hover {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-left: -1rem;
+        margin-right: -1rem;
+    }
+    
+    .event-meta span {
+        display: inline-block;
+    }
+    
+    .status-badge {
+        font-size: 0.85rem;
+        padding: 0.35rem 0.75rem;
+        border-radius: 20px;
+    }
+    
+    .btn-group .btn {
+        padding: 0.375rem 0.75rem;
+    }
+    
+    /* Upcoming Events */
+    .upcoming-event-card {
+        padding: 1rem;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    .upcoming-event-card:hover {
+        border-color: var(--riphah-yellow);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    }
+    
+    /* Quick Actions */
+    .quick-actions-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .quick-action-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+    }
+    
+    .quick-action-item:hover {
+        background: rgba(255, 210, 0, 0.1);
+        border-color: var(--riphah-yellow);
+        transform: translateX(5px);
+    }
+    
+    .quick-action-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--riphah-yellow);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+    
+    .quick-action-icon i {
+        color: var(--riphah-blue);
+        font-size: 1.1rem;
+    }
+    
+    .quick-action-content h6 {
+        color: var(--riphah-blue);
+        margin: 0;
+        font-size: 0.95rem;
+    }
+    
+    /* Categories */
+    .categories-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .category-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        border-radius: 8px;
+        text-decoration: none;
+        color: var(--riphah-blue);
+        transition: all 0.3s ease;
+    }
+    
+    .category-item:hover {
+        background: rgba(255, 210, 0, 0.1);
+        transform: translateX(5px);
+    }
+    
+    .category-item i {
+        font-size: 1.1rem;
+        width: 24px;
+    }
+    
+    .category-item span {
+        flex: 1;
+        font-weight: 500;
+    }
+    
+    /* Profile Summary */
+    .profile-summary {
+        padding: 1rem 0;
+    }
+    
+    .profile-avatar i {
+        color: var(--riphah-yellow);
+    }
+    
+    .profile-stats {
+        margin: 1rem 0;
+    }
+    
+    .stat-item {
+        text-align: center;
+    }
+    
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--riphah-blue);
+    }
+    
+    .stat-label {
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    /* Button Styling */
+    .btn-riphah-yellow {
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-riphah-yellow:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(255, 210, 0, 0.3);
+    }
+    
+    .btn-riphah-outline {
+        border: 2px solid var(--riphah-blue);
+        color: var(--riphah-blue);
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-riphah-outline:hover {
+        background: var(--riphah-blue);
+        color: white;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        .grid-system.grid-col-4 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .grid-system.grid-col-2 {
+            grid-template-columns: 1fr;
+        }
+        
+        .registration-item .row > div {
+            margin-bottom: 0.5rem;
+        }
+        
+        .registration-item .text-end {
+            text-align: left !important;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .grid-system.grid-col-4 {
+            grid-template-columns: 1fr;
+        }
+        
+        .grid-item-title {
+            font-size: 1.8rem;
+        }
+        
+        .notification-item .row > div {
+            margin-bottom: 0.5rem;
+        }
+        
+        .quick-action-item {
+            padding: 0.5rem;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .grid-item {
+            padding: 1rem;
+        }
+        
+        .grid-item-icon {
+            width: 40px;
+            height: 40px;
+        }
+        
+        .grid-item-icon i {
+            font-size: 1.1rem;
+        }
+        
+        .grid-item-title {
+            font-size: 1.5rem;
+        }
+        
+        .profile-avatar i {
+            font-size: 3rem;
+        }
+        
+        .stat-value {
+            font-size: 1.2rem;
+        }
+    }
+</style>
+
+{% endblock %}
